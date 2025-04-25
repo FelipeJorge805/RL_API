@@ -8,9 +8,7 @@ namespace RL_API
 {
     class RLPlayer() : ModPlayer
     {
-
-		Tile_Scan tileScanner = new();
-        List<object> tiles;
+        List<TileInfo> tiles;
         int hertz = 1;
         private static string lastKnownAction = "none";
         public override void SetControls()
@@ -70,13 +68,17 @@ namespace RL_API
     	{
 			//base.PreUpdate();
 			if(Main.GameUpdateCount % hertz == 0){
-				tiles = tileScanner.scanTiles(Main.LocalPlayer,3);
+				tiles = Tile_Scan.scanTiles(Main.LocalPlayer,3);
 			}
 		}
 		public override void PostUpdate()
 		{
             if(Main.GameUpdateCount % hertz != 0) return;
             //var data = "{obs: test}";
+            RLObservation obs = RLObsCollector.CollectObservation(Player);
+            string json = JsonSerializer.Serialize(obs);
+            ConnectionManager.EnqueueObservation(json);
+
             var obsJson = JsonSerializer.Serialize(new { obs = "test" });
             ConnectionManager.EnqueueObservation(obsJson);  // just queue, no await/read here
 

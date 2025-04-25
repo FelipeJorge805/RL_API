@@ -8,12 +8,9 @@ using Terraria.ModLoader;
 
 namespace RL_API
 {
-	public class Tile_Scan
+	public static class Tile_Scan
 	{
-		Vector2 playerPos;
-
-        public Tile_Scan(){}
-		public List<object> scanTiles(Player player, int radius){
+		public static List<TileInfo> scanTiles(Player player, int radius){
             //playerPos = player_position;
 
             //int tileSize = 16;
@@ -61,7 +58,7 @@ namespace RL_API
                 ModContent.GetInstance<Tile_Scan>().Logger.Error(e.Message);
             }*/
 
-            return tiles; 
+            return null; 
 		}
 	}
 }
