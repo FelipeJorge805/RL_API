@@ -15,7 +15,6 @@ namespace RL_API
 	{
 		public override void Load()
         {
-        	ConnectionManager.Initialize("127.0.0.1", 5000);
         }
 		/*public void saveLog(){
 			Logger.Info(playerPos);
