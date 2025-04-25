@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace RL_API
 {
-	public class Tile_Scan : Mod
+	public class Tile_Scan
 	{
 		Vector2 playerPos;
 
@@ -31,7 +31,7 @@ namespace RL_API
                     {
                         int tx = px + x;
                         int ty = py + y;
-                        ModContent.GetInstance<Tile_Scan>().Logger.Info("tx:"+tx+" ty:"+ty + " px:"+px + " py:"+py + " x:"+x + " y:"+y);
+                        //ModContent.GetInstance<RL_API>().Logger.Info("tx:"+tx+" ty:"+ty + " px:"+px + " py:"+py + " x:"+x + " y:"+y);
                         Tile tile = Main.tile[tx, ty];
 
                         int tileType = tile.HasTile ? tile.TileType : -1;
@@ -45,8 +45,8 @@ namespace RL_API
                 }
             }
             catch(Exception e){
-                ModContent.GetInstance<Tile_Scan>().Logger.Info("Error in scan loop.");
-                ModContent.GetInstance<Tile_Scan>().Logger.Error(e.Message);
+                ModContent.GetInstance<RL_API>().Logger.Info("Error in scan loop.");
+                ModContent.GetInstance<RL_API>().Logger.Error(e.Message);
             }
             
             
