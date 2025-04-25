@@ -60,7 +60,7 @@ namespace RL_API
         /// </summary>
         public static string PeekAction()
         {
-            ModContent.GetInstance<RL_API>().Logger.Info("Peeked Action: " + _latestAction);
+            //ModContent.GetInstance<RL_API>().Logger.Info("Peeked Action: " + _latestAction);
             return _latestAction;
         }
 
@@ -69,7 +69,7 @@ namespace RL_API
         /// </summary>
         public static string ConsumeAction()
         {
-            ModContent.GetInstance<RL_API>().Logger.Info("Consumed Action: " + _latestAction);
+            //ModContent.GetInstance<RL_API>().Logger.Info("Consumed Action: " + _latestAction);
             string a = _latestAction;
             _latestAction = "none";
             return a;
@@ -86,17 +86,15 @@ namespace RL_API
                 {
                     // Send the observation to Python
                     _writer.WriteLine(obs);
-                    ModContent.GetInstance<RL_API>().Logger.Info("Sent obs: " + obs);
+                    //ModContent.GetInstance<RL_API>().Logger.Info("Sent obs: " + obs);
 
-                    // Wait for the agent's reply
+                    // Read Python's action response (also JSON)
                     string reply = _reader.ReadLine();
                     if (!string.IsNullOrWhiteSpace(reply))
                     {
-                        _latestAction = JsonSerializer
-                            .Deserialize<AgentReply>(reply)
-                            ?.action ?? "none";
+                        _latestAction = JsonSerializer.Deserialize<AgentReply>(reply)?.action ?? "none";
                     }
-                    ModContent.GetInstance<RL_API>().Logger.Info("Received Action: " + _latestAction);
+                    //ModContent.GetInstance<RL_API>().Logger.Info("Received Action: " + _latestAction);
                 }
                 catch (Exception ex)
                 {
