@@ -1,0 +1,11 @@
+bin/
+obj/
+*.user
+*.suo
+*.nuget.*
+*.cache
+*.dgpspec.json
+*.log
+*.vs/
+*.hjson
+icon.png
