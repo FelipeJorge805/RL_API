@@ -75,12 +75,11 @@ namespace RL_API
 		{
             if(Main.GameUpdateCount % hertz != 0) return;
             //var data = "{obs: test}";
-            RLObservation obs = RLObsCollector.CollectObservation(Player);
-            string json = JsonSerializer.Serialize(obs);
-            ConnectionManager.EnqueueObservation(json);
 
-            var obsJson = JsonSerializer.Serialize(new { obs = "test" });
-            ConnectionManager.EnqueueObservation(obsJson);  // just queue, no await/read here
+            RLObservation obs = RLObsCollector.CollectObservation(Player);
+            var compressedObs = RLObsCompressor.Compress(obs);
+            string json = JsonSerializer.Serialize(compressedObs);
+            ConnectionManager.EnqueueObservation(json);
 
             var action = ConnectionManager.ConsumeAction();
 			//base.PostUpdate();
