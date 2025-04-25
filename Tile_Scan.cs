@@ -11,19 +11,18 @@ namespace RL_API
 	public static class Tile_Scan
 	{
 		public static List<TileInfo> scanTiles(Player player, int radius){
-            //playerPos = player_position;
 
             //int tileSize = 16;
             int px = (int)(player.Center.X /16f);
             int py = (int)(player.Center.Y / 16f);
 
             //var tileGrid = new List<List<object>>();
-            var tiles = new List<Object>();
+            var tiles = new List<TileInfo>();
             
             try{
                 for (int y = -radius; y <= radius; y++)
                 {
-                    var row = new List<object>();
+                    var row = new List<TileInfo>();
                     for (int x = -radius; x <= radius; x++)
                     {
                         int tx = px + x;
@@ -36,7 +35,7 @@ namespace RL_API
                         int liquidAmount = tile.LiquidAmount;
 
                         //row.Add(new object[] { tileType, liquid, liquidAmount });
-                        tiles.Add(tileType);
+                        tiles.Add(new TileInfo(tileType,liquid,liquidAmount));
                     }
                     //tileGrid.Add(row);
                 }
