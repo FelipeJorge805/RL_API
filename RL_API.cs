@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.GameInput;
 using Terraria.ModLoader;
 
 namespace RL_API
@@ -15,10 +7,16 @@ namespace RL_API
 	{
 		public override void Load()
         {
+			base.Load();
         }
-		/*public void saveLog(){
+        /*public void saveLog(){
 			Logger.Info(playerPos);
 			ModContent.GetInstance<RL_API>().Logger.Info("This is a log message.");
 		}*/
+        public override void Unload()
+        {
+            base.Unload();
+			ConnectionManager.Close();
+        }
 	}
 }
