@@ -4,6 +4,17 @@ namespace RL_API
 {
     public class RLObservation
     {
+        //add dropped items or unlooted items
+        public List<RLItemObservation> items = null; // ItemScanner.scan(player_pos);
+
+        //add max hp / max mana
+        // day time or time ?
+        //item states / inventory / free slots/full
+        //possible crafts
+        //is drowning?
+        //can swim?
+        //max speed?
+
         // Player movement
         public float VelocityX { get; set; }
         public float VelocityY { get; set; }
@@ -33,7 +44,7 @@ namespace RL_API
         // Summons
         public int ActiveMinionsCount { get; set; }
 
-        // Events / Bosses
+        // Events / Bosses / WRONG! NEED MOAR! SILLY AI
         public bool IsBloodMoon { get; set; }
         public bool IsBossActive { get; set; }
 
@@ -42,7 +53,7 @@ namespace RL_API
         public bool IsHooked { get; set; }
         public bool IsKnockedBack { get; set; }
 
-        // Ammo
+        // Ammo / WRONG! NEED MOAR! SILLY AI
         public int ArrowCount { get; set; }
         public int GelCount { get; set; }
 
