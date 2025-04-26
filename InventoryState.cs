@@ -1,48 +1,36 @@
-using System.Collections.Generic;
 using Terraria;
 
-namespace RL_API
+public class InventorySlotInfo
 {
-    public class InventoryState
+    public int ItemType { get; set; }
+    public int StackSize { get; set; }
+}
+
+public class InventoryState
+{
+    public InventorySlotInfo[] Slots = new InventorySlotInfo[50];
+
+    public void Capture(Player player)
     {
-        public Dictionary<int, int> ItemCounts { get; private set; } = new Dictionary<int, int>();
-
-        public void Capture(Player player)
+        for (int slot = 0; slot < 50; slot++)
         {
-            ItemCounts.Clear();
+            var item = player.inventory[slot];
 
-            foreach (var item in player.inventory)
+            Slots[slot] = new InventorySlotInfo
             {
-                if (item != null && item.stack > 0)
-                {
-                    if (!ItemCounts.ContainsKey(item.type))
-                        ItemCounts[item.type] = 0;
-
-                    ItemCounts[item.type] += item.stack;
-                }
-            }
+                ItemType = item?.type ?? 0,
+                StackSize = item?.stack ?? 0
+            };
         }
+    }
 
-        public int GetCount(int itemType)
-        {
-            return ItemCounts.TryGetValue(itemType, out var count) ? count : 0;
-        }
+    public int GetItemTypeAtSlot(int slot)
+    {
+        return (slot >= 0 && slot < Slots.Length) ? Slots[slot].ItemType : 0;
+    }
 
-        public static List<(int itemType, int amountPickedUp)> Compare(InventoryState previous, InventoryState current)
-        {
-            var pickups = new List<(int, int)>();
-
-            foreach (var (type, countNow) in current.ItemCounts)
-            {
-                int countBefore = previous.GetCount(type);
-                if (countNow > countBefore)
-                {
-                    int amountPickedUp = countNow - countBefore;
-                    pickups.Add((type, amountPickedUp));
-                }
-            }
-
-            return pickups;
-        }
+    public int GetStackSizeAtSlot(int slot)
+    {
+        return (slot >= 0 && slot < Slots.Length) ? Slots[slot].StackSize : 0;
     }
 }
