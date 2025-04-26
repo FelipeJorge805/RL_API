@@ -153,6 +153,60 @@ namespace RL_API
 				Main.NewText(t);
 			}*/
 		}
+        public override void OnHurt(Player.HurtInfo info)
+        {
+            base.OnHurt(info);
+            int damageTaken = info.Damage;
+
+            if (damageTaken > 0)
+            {
+                rewardAccumulator -= damageTaken * 0.2f; // Penalize 0.2 per damage taken
+            }
+        }
+        /*public override void OnHitAnything(float x, float y, Entity victim)
+        {
+            if (victim is NPC targetNpc)
+            {
+                if (targetNpc.damage > 0)
+                {
+                    rewardAccumulator += damage * 0.05f;
+                }
+
+                if (targetNpc.life <= 0 && !targetNpc.active)
+                {
+                    rewardAccumulator += 5f;
+                }
+            }
+        }*/
+
+        public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            base.OnHitNPCWithItem(item, target, hit, damageDone);
+            if (damageDone > 0)
+            {
+                rewardAccumulator += damageDone * 0.1f; // Reward 0.1 per damage done
+            }
+
+            // Bonus for kill
+            if (target.life <= 0 && target.active == false)
+            {
+                rewardAccumulator += 5f; // Big reward for killing enemy
+            }
+        }
+        public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            base.OnHitNPCWithProj(proj, target, hit, damageDone);
+            if (damageDone > 0)
+            {
+                rewardAccumulator += damageDone * 0.1f; // Reward 0.1 per damage done
+            }
+
+            // Bonus for kill
+            if (target.life <= 0 && target.active == false)
+            {
+                rewardAccumulator += 5f; // Big reward for killing enemy
+            }
+        }
         public static void UpdateCursor(Player player, float deltaX, float deltaY, float maxDistance = 300f)
         {
             Vector2 playerCenter = player.Center;
