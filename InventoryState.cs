@@ -6,31 +6,44 @@ public class InventorySlotInfo
     public int StackSize { get; set; }
 }
 
-public class InventoryState
+namespace RL_API
 {
-    public InventorySlotInfo[] Slots = new InventorySlotInfo[50];
-
-    public void Capture(Player player)
+    public class InventoryState
     {
-        for (int slot = 0; slot < 50; slot++)
+        public InventorySlotInfo[] Slots = new InventorySlotInfo[50];
+        public InventoryState()
         {
-            var item = player.inventory[slot];
-
-            Slots[slot] = new InventorySlotInfo
+            for (int i = 0; i < 50; i++)
             {
-                ItemType = item?.type ?? 0,
-                StackSize = item?.stack ?? 0
-            };
+                Slots[i] = new InventorySlotInfo
+                {
+                    ItemType = 0,
+                    StackSize = 0
+                };
+            }
         }
-    }
+        public void Capture(Player player)
+        {
+            for (int slot = 0; slot < 50; slot++)
+            {
+                var item = player.inventory[slot];
 
-    public int GetItemTypeAtSlot(int slot)
-    {
-        return (slot >= 0 && slot < Slots.Length) ? Slots[slot].ItemType : 0;
-    }
+                Slots[slot] = new InventorySlotInfo
+                {
+                    ItemType = item?.type ?? 0,
+                    StackSize = item?.stack ?? 0
+                };
+            }
+        }
 
-    public int GetStackSizeAtSlot(int slot)
-    {
-        return (slot >= 0 && slot < Slots.Length) ? Slots[slot].StackSize : 0;
+        public int GetItemTypeAtSlot(int slot)
+        {
+            return (slot >= 0 && slot < Slots.Length) ? Slots[slot].ItemType : 0;
+        }
+
+        public int GetStackSizeAtSlot(int slot)
+        {
+            return (slot >= 0 && slot < Slots.Length) ? Slots[slot].StackSize : 0;
+        }
     }
 }
