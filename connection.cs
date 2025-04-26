@@ -47,6 +47,21 @@ namespace RL_API
             }
         }
 
+        //FOR MULTIPLE CONNECTIONS AT A TIME
+        /*public static void Initialize()
+        {
+            int port = 5000; // Default port
+            var envPort = Environment.GetEnvironmentVariable("TERRALPHA_PORT");
+            if (int.TryParse(envPort, out int parsedPort))
+            {
+                port = parsedPort;
+            }
+
+            // Now connect using the dynamic port
+            _client = new TcpClient("127.0.0.1", port);
+            // (then your normal reader/writer init)
+        }*/
+
         /// <summary>
         /// Called from PostUpdate to enqueue the latest observation (as a JSON string).
         /// </summary>
