@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil.Cil;
 using Terraria;
 using Terraria.Graphics.Light;
 using Terraria.Map;
@@ -74,6 +75,7 @@ namespace RL_API
                     break;
                 case "discard":
                     Player.controlThrow = true;
+                    rewardAccumulator -= 1f;
                     break;
                 case "grapple":
                     Player.controlHook = true;
@@ -129,11 +131,26 @@ namespace RL_API
             if(Main.GameUpdateCount % hertz != 0) return;
             //var data = "{obs: test}";
 
+            InventoryState newInventoryState = new InventoryState();
+            newInventoryState.Capture(Player);
+
+            rewardAccumulator += CalculatePickupReward(Player,newInventoryState);
+
             RLObservation obs = RLObsCollector.CollectObservation(Player);
+            obs.addInventoryState(newInventoryState);
+            
             var compressedObs = RLObsCompressor.Compress(obs);
-            string json = JsonSerializer.Serialize(compressedObs);
+
+            var EnvStep = new {
+                obs = compressedObs,
+                reward = rewardAccumulator
+            };
+
+            string json = JsonSerializer.Serialize(EnvStep);
             ConnectionManager.EnqueueObservation(json);
 
+            rewardAccumulator = 0;
+            lastInventoryState = newInventoryState;
             var action = ConnectionManager.ConsumeAction();
             //Main.dedServ=true;
             //Main.drawSkip = true;
@@ -232,26 +249,36 @@ namespace RL_API
             Main.mouseX = (int)cursorScreenPos.X;
             Main.mouseY = (int)cursorScreenPos.Y;
         }
-
-        public float CalculatePickupReward(Player player)
+        public float CalculatePickupReward(Player player, InventoryState currentInventory)
         {
             float reward = 0f;
 
-            var currentInventory = new InventoryState();
-            currentInventory.Capture(player);
-
-            var pickups = InventoryState.Compare(lastInventoryState, currentInventory);
-
-            foreach (var (itemType, amountPickedUp) in pickups)
+            for (int slot = 0; slot < 50; slot++)
             {
-                int newCount = currentInventory.GetCount(itemType);
-                reward += BlockGatherReward.GetRewardForPickup(itemType, newCount) * amountPickedUp;
-            }
+                var previousSlot = lastInventoryState.Slots[slot];
+                var currentSlot = currentInventory.Slots[slot];
 
-            lastInventoryState = currentInventory; // Update snapshot
+                if (currentSlot.ItemType == previousSlot.ItemType)
+                {
+                    int pickedUp = currentSlot.StackSize - previousSlot.StackSize;
+                    if (pickedUp > 0)
+                    {
+                        reward += BlockGatherReward.GetRewardForPickup(currentSlot.ItemType, currentSlot.StackSize) * pickedUp;
+                    }
+                }
+                else
+                {
+                    // Slot changed to a different item — treat whole stack as pickup
+                    if (currentSlot.StackSize > 0)
+                    {
+                        reward += BlockGatherReward.GetRewardForPickup(currentSlot.ItemType, currentSlot.StackSize);
+                    }
+                }
+            }
 
             return reward;
         }
+
 
     }
 }
