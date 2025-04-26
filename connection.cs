@@ -20,7 +20,7 @@ namespace RL_API
             new BlockingCollection<string>(new ConcurrentQueue<string>());
 
         // The most recently received action from the Python agent
-        private static volatile string _latestAction = "none";
+        private static volatile AgentAction _latestAction;
 
         /// <summary>
         /// Called from Mod.Load(). Connects to the Python server and starts the I/O loop.
@@ -58,7 +58,7 @@ namespace RL_API
         /// <summary>
         /// Called from SetControls to read the latest action (without clearing).
         /// </summary>
-        public static string PeekAction()
+        public static AgentAction PeekAction()
         {
             //ModContent.GetInstance<RL_API>().Logger.Info("Peeked Action: " + _latestAction);
             return _latestAction;
@@ -67,11 +67,11 @@ namespace RL_API
         /// <summary>
         /// Called from PostUpdate (or SetControls) to consume the action.
         /// </summary>
-        public static string ConsumeAction()
+        public static AgentAction ConsumeAction()
         {
             //ModContent.GetInstance<RL_API>().Logger.Info("Consumed Action: " + _latestAction);
-            string a = _latestAction;
-            _latestAction = "none";
+            AgentAction a = _latestAction;
+            _latestAction = null;
             return a;
         }
 
@@ -92,7 +92,7 @@ namespace RL_API
                     string reply = _reader.ReadLine();
                     if (!string.IsNullOrWhiteSpace(reply))
                     {
-                        _latestAction = JsonSerializer.Deserialize<AgentReply>(reply)?.action ?? "none";
+                        _latestAction = JsonSerializer.Deserialize<AgentAction>(reply);
                     }
                     //ModContent.GetInstance<RL_API>().Logger.Info("Received Action: " + _latestAction);
                 }
@@ -132,5 +132,14 @@ namespace RL_API
         {
             public string action { get; set; }
         }
+        public class AgentAction
+        {
+            public string move { get; set; }    // "left", "right", "still"
+            public string action { get; set; }  // "use_item", "jump", etc.
+            public float[] cursor { get; set; } // [deltaX, deltaY]
+
+            public bool shift { get; set; } // use shift
+        }
+
     }
 }
