@@ -12,6 +12,9 @@ namespace RL_API
         {
             var observation = new RLObservation
             {
+                //Nearby items
+                NearItems = ItemScanner.ScanNearbyItems(player, 10, 10),
+
                 // Movement
                 VelocityX = player.velocity.X,
                 VelocityY = player.velocity.Y,

@@ -2,6 +2,8 @@ namespace RL_API
 {
     public class RLCompressedObs
     {
+        public float[] NearItems { get; set; }
+        public float[] InvState { get; set; }
         public float[] PlayerInfo { get; set; }    // [VelocityX, VelocityY, PosX, PosY, HealthRatio, ManaRatio]
         public byte[] TileTypes { get; set; }       // Flattened 1D array of tile types around the player
         public byte HeldItemType { get; set; }

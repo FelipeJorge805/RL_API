@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace RL_API
@@ -5,7 +6,9 @@ namespace RL_API
     public class RLObservation
     {
         //add dropped items or unlooted items
-        public List<RLItemObservation> items = null; // ItemScanner.scan(player_pos);
+        public List<RLItemObservation> NearItems { get; set; } // ItemScanner.scan(player_pos);
+
+        public InventoryState InvState { get; set;}
 
         //add max hp / max mana
         // day time or time ?
@@ -73,5 +76,10 @@ namespace RL_API
         public int MountType { get; set; }
         public int LightPetType { get; set; }
         public int PetType { get; set; }
+
+        internal void addInventoryState(InventoryState newInventory)
+        {
+            InvState = newInventory;
+        }
     }
 }

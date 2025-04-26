@@ -13,6 +13,10 @@ namespace RL_API
             try{ 
                 var compressed = new RLCompressedObs
                 {
+                    NearItems = CompressNearbyItems(full.NearItems,10),
+
+                    InvState = CompressInventory(full.InvState),
+                    
                     PlayerInfo =
                     [
                         full.VelocityX,
@@ -70,5 +74,48 @@ namespace RL_API
             if (biomes.Contains("Glowshroom")) return 10;
             return 0; // Default to Forest
         }
+        public static float[] CompressNearbyItems(List<RLItemObservation> items, float scanRadius)
+        {
+            var compressed = new List<float>();
+
+            foreach (var item in items)
+            {
+                // Normalize ItemID
+                float normalizedId = item.ItemId / 7000f; // Terraria ItemID max (safe overestimate)
+                // Normalize StackSize
+                float normalizedStack = item.StackSize / 999f; // Max typical stack
+                // Normalize distance
+                float normalizedDistance = item.DistanceToPlayer / scanRadius;
+                // Pickup ready (already 0 or 1)
+
+                compressed.Add(normalizedId);
+                compressed.Add(normalizedStack);
+                compressed.Add(normalizedDistance);
+                compressed.Add(item.IsPickupReady ? 1f : 0f);
+            }
+
+            return compressed.ToArray();
+        }
+        public static float[] CompressInventory(InventoryState invState)
+        {
+            var compressed = new List<float>();
+
+            for (int slot = 0; slot < 50; slot++)
+            {
+                var slotInfo = invState.Slots[slot];
+
+                // Normalize stack size
+                float normalizedStack = slotInfo.StackSize / 999f;
+                compressed.Add(normalizedStack);
+
+                // (Optional) Normalize ItemType if you want
+                float normalizedItemType = slotInfo.ItemType / 7000f;
+                compressed.Add(normalizedItemType);
+            }
+
+            return compressed.ToArray();
+        }
+
+
     }
 }
