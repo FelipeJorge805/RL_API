@@ -11,6 +11,12 @@ namespace RL_API{
 
         public byte TileType { get; internal set; }
 
+        public int LiquidType { get; internal set; }
+
+        public int LiquidAmount { get; internal set; }
+
+        public float Brightness { get; internal set; }
+
         internal double getBrightness()
         {
             return Math.Round(brightness,2);
