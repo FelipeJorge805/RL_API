@@ -2,12 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil.Cil;
 using Terraria;
-using Terraria.Graphics.Light;
-using Terraria.Map;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace RL_API
 {
@@ -16,23 +13,33 @@ namespace RL_API
         List<TileInfo> tiles;
         int hertz = 1;
         //private static string lastKnownAction = "none";
-        String latestMove = "still";
-        bool latestShift = false;
+        AgentAction lastAction;
+        AgentAction newAction;
+
+        int discardCooldown = 600;
 
         float rewardAccumulator = 0;
-        private InventoryState lastInventoryState = new InventoryState();
+        private InventoryState lastInventoryState;
+
+        public override void OnEnterWorld()
+        {
+            base.OnEnterWorld();
+            lastInventoryState = new InventoryState(Player.inventory);
+            lastAction = new AgentAction("still","none",[0f,0f],false);
+        }
         public override void SetControls()
 		{
-            var action = ConnectionManager.PeekAction();
-
+            if(discardCooldown>=0)discardCooldown--;
+            newAction = ConnectionManager.PeekAction();
+            //Main.NewText("action: " + action.action + " move: " + action.move + " shift: " + action.shift + " cursor: " + action.cursor);
 
             //shift modifier
-            if(action!= null && latestShift != action.shift) latestShift = action.shift;
-            if(action!= null && action.shift) Player.controlSmart = true;
+            if(newAction!= null && lastAction.Shift != newAction.Shift) lastAction.Shift = newAction.Shift;
+            if(newAction!= null && newAction.Shift) Player.controlSmart = true;
 
-            if(action!= null && latestMove!=action.move) latestMove = action.move;  
+            if(newAction!= null && lastAction.Move!=newAction.Move) lastAction.Move = newAction.Move; 
             // Handle movement
-            switch (latestMove)
+            switch (lastAction.Move)
             {
                 case "left":
                     Player.controlLeft = true;
@@ -51,9 +58,9 @@ namespace RL_API
                     break;
             }
 
-            if (action == null) return; //was up top but I want to hold movement and shift keys for more ticks
+            if (newAction == null) return; //was up top but I want to hold movement and shift keys for more ticks
 
-            switch (action.action)
+            switch (newAction.Action)
             {
                 case "use_item":
                     Player.controlUseItem = true;
@@ -74,8 +81,11 @@ namespace RL_API
                     //SwapHotbarItems(); // Your custom function
                     break;
                 case "discard":
-                    Player.controlThrow = true;
-                    rewardAccumulator -= 1f;
+                    if(discardCooldown<0){
+                        Player.controlThrow = true;
+                        rewardAccumulator -= 2f;
+                        discardCooldown = 600;
+                    }
                     break;
                 case "grapple":
                     Player.controlHook = true;
@@ -96,15 +106,19 @@ namespace RL_API
                 case "hotbar_7":
                 case "hotbar_8":
                 case "hotbar_9":
-                    int hotbarSlot = int.Parse(action.action.Split('_')[1]);
+                    int hotbarSlot = int.Parse(newAction.Action.Split('_')[1]);
                     Player.selectedItem = hotbarSlot;
+                    Item selectedItem = Player.inventory[Player.selectedItem];
+                    bool isHotbarSlotEmpty = selectedItem == null || selectedItem.stack == 0 || selectedItem.type == ItemID.None;
+                    if(isHotbarSlotEmpty){
+                        rewardAccumulator -= 1f;
+                    }
                     break;
                 case "none":
                     // Do nothing
                     break;
             }
 
-            UpdateCursor(Player,action.cursor[0],action.cursor[1]);
         }
 
         public override void PreUpdateBuffs()
@@ -128,47 +142,46 @@ namespace RL_API
 		}
 		public override void PostUpdate()
 		{
+            //run every tick
+            if(newAction==null && lastAction!=null){
+                Main.mouseX = (int)lastAction.Cursor[0];
+                Main.mouseY = (int)lastAction.Cursor[1];
+            }else if(newAction!=null){
+                (Main.mouseX , Main.mouseY) = MapCursorBounds(newAction.Cursor[0],newAction.Cursor[1],Player.Center,16f*16f); //16 blocks * 16 pixels per block: radius
+            }
+            
             if(Main.GameUpdateCount % hertz != 0) return;
-            //var data = "{obs: test}";
 
-            InventoryState newInventoryState = new InventoryState();
-            newInventoryState.Capture(Player);
+            //Check new inventory and calculate pick-up rewards
+            InventoryState newInventoryState = new(Player.inventory);
+            if(lastInventoryState==null){
+                lastInventoryState = newInventoryState;
+            }
+            else
+                rewardAccumulator += CalculatePickupReward(previousInv:lastInventoryState,
+                                                        currentInv:newInventoryState);
 
-            rewardAccumulator += CalculatePickupReward(Player,newInventoryState);
-
+            //Gather Obs and send
             RLObservation obs = RLObsCollector.CollectObservation(Player);
-            obs.addInventoryState(newInventoryState);
+            obs.InvState=newInventoryState;
             
             var compressedObs = RLObsCompressor.Compress(obs);
+            var FlatObs = compressedObs.Flatten(); //might be useless
+            //Main.NewText(FlatObs.Length);
+            Main.NewText("Reward: " + rewardAccumulator);
 
             var EnvStep = new {
-                obs = compressedObs,
+                obs = FlatObs,
                 reward = rewardAccumulator
             };
-
+            
             string json = JsonSerializer.Serialize(EnvStep);
             ConnectionManager.EnqueueObservation(json);
 
-            rewardAccumulator = 0;
+            //update State
+            rewardAccumulator = 0f;
             lastInventoryState = newInventoryState;
-            var action = ConnectionManager.ConsumeAction();
-            //Main.dedServ=true;
-            //Main.drawSkip = true;
-            //Lighting.Mode = LightMode.White;
-			//base.PostUpdate();
-            /*if(Main.GameUpdateCount % 60 == 0){
-				tiles = Tile_Scan.scanTiles(Main.LocalPlayer,4);
-			}
-			if(Main.GameUpdateCount % 60 == 0){
-				Main.NewText("Printing... " + Main.GameUpdateCount/60);
-				String t = "";
-				tiles.ForEach(o => {
-                    t+= o.getBrightness() > 0.2f ?
-                    o.getBrightness()+"," :
-                    "" ;
-            });
-				Main.NewText(t);
-			}*/
+            lastAction = ConnectionManager.ConsumeAction();
 		}
         public override void OnHurt(Player.HurtInfo info)
         {
@@ -224,60 +237,37 @@ namespace RL_API
                 rewardAccumulator += 5f; // Big reward for killing enemy
             }
         }
-        public static void UpdateCursor(Player player, float deltaX, float deltaY, float maxDistance = 300f)
+        public static (int, int) MapCursorBounds(float nnX, float nnY, Vector2 playerCenter, float radius)
         {
-            Vector2 playerCenter = player.Center;
-            Vector2 desiredWorldPos = playerCenter + new Vector2(deltaX, deltaY) * maxDistance;
+            // Clamp inputs just in case (optional)
+            nnX = Math.Clamp(nnX, -1f, 1f);
+            nnY = Math.Clamp(nnY, -1f, 1f);
 
-            // Clamp to circle
-            float dist = Vector2.Distance(playerCenter, desiredWorldPos);
-            if (dist > maxDistance)
-            {
-                Vector2 dir = Vector2.Normalize(desiredWorldPos - playerCenter);
-                desiredWorldPos = playerCenter + dir * maxDistance;
-            }
+            // Map [-1, 1] to circle around player
+            float offsetX = nnX * radius;
+            float offsetY = nnY * radius;
 
-            // Convert to screen coords
-            Vector2 cursorScreenPos = desiredWorldPos - Main.screenPosition;
+            float cursorX = playerCenter.X + offsetX;
+            float cursorY = playerCenter.Y + offsetY;
 
-            // Clamp inside screen
-            int margin = 50;
-            cursorScreenPos.X = Math.Clamp(cursorScreenPos.X, margin, Main.screenWidth - margin);
-            cursorScreenPos.Y = Math.Clamp(cursorScreenPos.Y, margin, Main.screenHeight - margin);
-
-            // Set Terraria mouse position
-            Main.mouseX = (int)cursorScreenPos.X;
-            Main.mouseY = (int)cursorScreenPos.Y;
+            return ((int)(cursorX - Main.screenPosition.X), (int)(cursorY-Main.screenPosition.Y));
         }
-        public float CalculatePickupReward(Player player, InventoryState currentInventory)
+
+        public static float CalculatePickupReward(InventoryState previousInv, InventoryState currentInv)
         {
             float reward = 0f;
 
-            for (int slot = 0; slot < 50; slot++)
-            {
-                var previousSlot = lastInventoryState.Slots[slot];
-                var currentSlot = currentInventory.Slots[slot];
+            var changes = currentInv.CompareTo(previousInv); // List<(int itemType, int amountPickedUp)>
 
-                if (currentSlot.ItemType == previousSlot.ItemType)
-                {
-                    int pickedUp = currentSlot.StackSize - previousSlot.StackSize;
-                    if (pickedUp > 0)
-                    {
-                        reward += BlockGatherReward.GetRewardForPickup(currentSlot.ItemType, currentSlot.StackSize) * pickedUp;
-                    }
-                }
-                else
-                {
-                    // Slot changed to a different item — treat whole stack as pickup
-                    if (currentSlot.StackSize > 0)
-                    {
-                        reward += BlockGatherReward.GetRewardForPickup(currentSlot.ItemType, currentSlot.StackSize);
-                    }
-                }
+            foreach (var (itemType, amountPickedUp) in changes)
+            {
+                float rewardPerItem = BlockGatherReward.GetRewardForPickup(itemType,amountPickedUp);
+                reward += rewardPerItem * amountPickedUp;
             }
 
             return reward;
         }
+
 
 
     }
