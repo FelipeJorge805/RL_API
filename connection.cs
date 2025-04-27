@@ -147,14 +147,19 @@ namespace RL_API
         {
             public string action { get; set; }
         }
-        public class AgentAction
-        {
-            public string move { get; set; }    // "left", "right", "still"
-            public string action { get; set; }  // "use_item", "jump", etc.
-            public float[] cursor { get; set; } // [deltaX, deltaY]
-
-            public bool shift { get; set; } // use shift
-        }
-
     }
+    public class AgentAction
+        {
+            public AgentAction(string Move, string Action, float[] Cursor, bool Shift){
+                this.Move=Move;
+                this.Action=Action;
+                this.Cursor=Cursor;
+                this.Shift=Shift;
+            }
+            public string Move { get; set; }    // "left", "right", "still"
+            public string Action { get; set; }  // "use_item", "jump", etc.
+            public float[] Cursor { get; set; } // [deltaX, deltaY]
+
+            public bool Shift { get; set; } // use shift
+        }
 }
