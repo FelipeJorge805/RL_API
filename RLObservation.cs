@@ -11,12 +11,16 @@ namespace RL_API
         public InventoryState InvState { get; set;}
 
         //add max hp / max mana
-        // day time or time ?
+        // day time or time ? if outside or with clock
+        //radar increases unit scan radius (might lag)
         //item states / inventory / free slots/full
         //possible crafts
         //is drowning?
         //can swim?
         //max speed?
+        //sort
+        //quick stack
+        //shift delete trashcan
 
         // Player movement
         public float VelocityX { get; set; }
