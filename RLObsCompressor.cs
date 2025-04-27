@@ -8,57 +8,55 @@ namespace RL_API
     {
         public static RLCompressedObs Compress(RLObservation full)
         {
-            //if(full==null) throw new Exception("Exception in Compress(): obs is null");
-
-            try{ 
+            try
+            { 
                 var compressed = new RLCompressedObs
                 {
-                    NearItems = CompressNearbyItems(full.NearItems,10),
+                    NearItems = CompressNearbyItems(full.NearItems, 800f), // Example scan radius
 
                     InvState = CompressInventory(full.InvState),
-                    
+                            
                     PlayerInfo =
                     [
-                        full.VelocityX,
-                        full.VelocityY,
-                        full.PositionX,
-                        full.PositionY,
-                        full.Health / 500f,  // Assuming max HP 500 normalized
-                        full.Mana / 200f     // Assuming max Mana 200 normalized
+                        full.VelocityX / 30f,
+                        full.VelocityY / 30f,
+                        full.PositionX / 5000f,
+                        full.PositionY / 2000f,
+                        full.Health / 500f,
+                        full.Mana / 200f
                     ],
 
-                    TileTypes = full.TilesAround != null
-                        ? full.TilesAround.ConvertAll(t => (byte)t.TileType).ToArray()
-                        : [],
+                    TilesAround = CompressTilesAround(full.TilesAround),
 
-                    HeldItemType = (byte)full.HeldItemType,
+                    HeldItemType = (float)full.HeldItemType / 7000f,
 
-                    NearbyEnemies = (byte)Math.Min(full.NearbyEnemiesCount, 255), // cap at 255
+                    NearbyEnemies = Math.Min(full.NearbyEnemiesCount, 255) / 255f,
 
-                    FacingDirection = (sbyte)full.FacingDirection,
+                    FacingDirection = (float)full.FacingDirection,
 
-                    TotalDefense = (byte)Math.Min(full.TotalDefense, 255), // cap
+                    TotalDefense = Math.Min(full.TotalDefense, 200) / 200f,
 
-                    BuffIds = full.ActiveBuffTypes.ConvertAll(b => (byte)b).ToArray(),
+                    BuffIds = full.ActiveBuffTypes.ConvertAll(b => (float)b / 300f).ToArray(),
 
-                    AccessoryIds = full.AccessoryTypes.ConvertAll(a => (byte)a).ToArray(),
+                    AccessoryIds = full.AccessoryTypes.ConvertAll(a => (float)a / 7000f).ToArray(),
 
-                    CurrentBiome = MapBiomeToId(full.CurrentBiomes),
+                    CurrentBiome = (float)MapBiomeToId(full.CurrentBiomes) / 10f,
 
-                    HookType = (byte)full.HookType,
-                    MountType = (byte)full.MountType,
-                    LightPetType = (byte)full.LightPetType,
-                    PetType = (byte)full.PetType,
-
+                    HookType = (float)full.HookType / 30f,
+                    MountType = (float)full.MountType / 40f,
+                    LightPetType = (float)full.LightPetType / 7000f,
+                    PetType = (float)full.PetType / 7000f,
                 };
 
                 return compressed;
             }
-            catch(Exception e){
-                ModContent.GetInstance<RL_API>().Logger.Info("Error in Compress: "+e.Message);
+            catch (Exception e)
+            {
+                ModContent.GetInstance<RL_API>().Logger.Info("Error in Compress: " + e.Message);
             }
             return null;
         }
+
 
         private static byte MapBiomeToId(List<string> biomes)
         {
@@ -98,24 +96,39 @@ namespace RL_API
         }
         public static float[] CompressInventory(InventoryState invState)
         {
+            var compressed = new float[50 * 2]; // 50 slots × (stack size + item type)
+
+            int index = 0;
+
+            foreach (var (itemType, totalStackSize) in invState.GetInventoryMap())
+            {
+                if (index >= 50)
+                    break;
+
+                compressed[index * 2] = totalStackSize / 999f; // Stack size normalized
+                compressed[index * 2 + 1] = itemType / 7000f;  // Item type normalized
+
+                index++;
+            }
+
+            return compressed;
+        }
+
+
+        public static float[] CompressTilesAround(List<TileInfo> tiles)
+        {
             var compressed = new List<float>();
 
-            for (int slot = 0; slot < 50; slot++)
+            foreach (var tile in tiles)
             {
-                var slotInfo = invState.Slots[slot];
-
-                // Normalize stack size
-                float normalizedStack = slotInfo.StackSize / 999f;
-                compressed.Add(normalizedStack);
-
-                // (Optional) Normalize ItemType if you want
-                float normalizedItemType = slotInfo.ItemType / 7000f;
-                compressed.Add(normalizedItemType);
+                compressed.Add(tile.TileType / 255f);    // Normalize tile type
+                compressed.Add(tile.LiquidType / 2f);     // Normalize liquid type
+                compressed.Add(tile.LiquidAmount / 255f); // Normalize liquid amount
+                compressed.Add((float)tile.getBrightness()); // Already 0-1
             }
 
             return compressed.ToArray();
         }
-
 
     }
 }
