@@ -17,6 +17,12 @@ public static class BlockGatherReward
 
     public static float GetRewardForPickup(int itemType, int inventoryAmount)
     {
+        //TODO:
+        //item type for most items should be reduced to categories: isPickaxe, isAxe, isBlock, etc.
+        //reward for putting a pickaxe in the hotbar should be given according to pickaxe power
+        //rewarding a pickaxe swap in the same slot should be calculated based on pickaxe power
+        //new axe/sword in inventory? calculate reward based on axe power or damage (or also the difference based on existing tools)
+
         // Special pickups
         if (itemType == ItemID.Heart)
             return 5f; // Heart pickup reward
