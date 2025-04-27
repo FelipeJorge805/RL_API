@@ -76,10 +76,5 @@ namespace RL_API
         public int MountType { get; set; }
         public int LightPetType { get; set; }
         public int PetType { get; set; }
-
-        internal void addInventoryState(InventoryState newInventory)
-        {
-            InvState = newInventory;
-        }
     }
 }
