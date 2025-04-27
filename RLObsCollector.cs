@@ -83,7 +83,7 @@ namespace RL_API
             var accessories = new List<int>();
             for (int i = 3; i <= 8; i++) // slots 3 to 8 are accessories by default
             {
-                if (player.armor[i].type > 0)
+                if (player.armor[i].type > ItemID.None)
                     accessories.Add(player.armor[i].type);
             }
             return accessories;
