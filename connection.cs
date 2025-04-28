@@ -149,17 +149,27 @@ namespace RL_API
         }
     }
     public class AgentAction
-        {
-            public AgentAction(string Move, string Action, float[] Cursor, bool Shift){
-                this.Move=Move;
-                this.Action=Action;
-                this.Cursor=Cursor;
-                this.Shift=Shift;
-            }
-            public string Move { get; set; }    // "left", "right", "still"
-            public string Action { get; set; }  // "use_item", "jump", etc.
-            public float[] Cursor { get; set; } // [deltaX, deltaY]
+    {
+        public string Move { get; set; }
+        public string Action { get; set; }
+        public float[] Cursor { get; set; }
+        public bool Shift { get; set; }
 
-            public bool Shift { get; set; } // use shift
+        // Parameterless constructor needed for JSON
+        public AgentAction() {}
+
+        // Static factory method for manual creation
+        public static AgentAction Create(string move, string action, float[] cursor, bool shift)
+        {
+            ModContent.GetInstance<RL_API>()
+                        .Logger.Info("Creating Agent: " + move+", "+action+", "+cursor+", "+shift);
+            return new AgentAction
+            {
+                Move = move,
+                Action = action,
+                Cursor = cursor,
+                Shift = shift
+            };
         }
+    }
 }

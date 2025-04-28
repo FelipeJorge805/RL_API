@@ -10,6 +10,8 @@ namespace RL_API
 {
     class RLPlayer() : ModPlayer
     {
+        float[] prevObs;
+        bool isDone = false;
         List<TileInfo> tiles;
         int hertz = 1;
         //private static string lastKnownAction = "none";
@@ -21,17 +23,25 @@ namespace RL_API
         float rewardAccumulator = 0;
         private InventoryState lastInventoryState;
 
+        public bool IsDeadLastTick;
+
         public override void OnEnterWorld()
         {
             base.OnEnterWorld();
             lastInventoryState = new InventoryState(Player.inventory);
-            lastAction = new AgentAction("still","none",[0f,0f],false);
+            lastAction = AgentAction.Create("still","none",[0f,0f],false);
         }
         public override void SetControls()
 		{
             if(discardCooldown>=0)discardCooldown--;
             newAction = ConnectionManager.PeekAction();
-            //Main.NewText("action: " + action.action + " move: " + action.move + " shift: " + action.shift + " cursor: " + action.cursor);
+            //Main.NewText("action: " + newAction.Action + " move: " + newAction.move + " shift: " + action.shift + " cursor: " + action.cursor);
+            if(lastAction==null){
+                lastAction=newAction;
+                return;
+            }
+            
+            if(newAction!=null) Main.NewText("Cursor: "+newAction.Cursor);
 
             //shift modifier
             if(newAction!= null && lastAction.Shift != newAction.Shift) lastAction.Shift = newAction.Shift;
@@ -39,6 +49,7 @@ namespace RL_API
 
             if(newAction!= null && lastAction.Move!=newAction.Move) lastAction.Move = newAction.Move; 
             // Handle movement
+            //Main.NewText("last action: "+lastAction);
             switch (lastAction.Move)
             {
                 case "left":
@@ -142,46 +153,33 @@ namespace RL_API
 		}
 		public override void PostUpdate()
 		{
+            bool isDeadNow = Player.dead;
+
+            if (!IsDeadLastTick && isDeadNow)
+            {
+                SendObservation(isDone: true);
+                UpdateState();                
+                IsDeadLastTick = isDeadNow;
+                return;
+            }
+
             //run every tick
-            if(newAction==null && lastAction!=null){
+            if(newAction==null && lastAction!=null){ //not sure if this actually saves much cpu power
                 Main.mouseX = (int)lastAction.Cursor[0];
                 Main.mouseY = (int)lastAction.Cursor[1];
             }else if(newAction!=null){
                 (Main.mouseX , Main.mouseY) = MapCursorBounds(newAction.Cursor[0],newAction.Cursor[1],Player.Center,16f*16f); //16 blocks * 16 pixels per block: radius
             }
-            
-            if(Main.GameUpdateCount % hertz != 0) return;
 
-            //Check new inventory and calculate pick-up rewards
-            InventoryState newInventoryState = new(Player.inventory);
-            if(lastInventoryState==null){
-                lastInventoryState = newInventoryState;
-            }
-            else
-                rewardAccumulator += CalculatePickupReward(previousInv:lastInventoryState,
-                                                        currentInv:newInventoryState);
+            // Normal hertz control
+            if (Main.GameUpdateCount % hertz != 0)
+                return;
 
-            //Gather Obs and send
-            RLObservation obs = RLObsCollector.CollectObservation(Player);
-            obs.InvState=newInventoryState;
-            
-            var compressedObs = RLObsCompressor.Compress(obs);
-            var FlatObs = compressedObs.Flatten(); //might be useless
-            //Main.NewText(FlatObs.Length);
-            Main.NewText("Reward: " + rewardAccumulator);
+            //Main.NewText("Reward: " + rewardAccumulator);
+            SendObservation(isDone: false);
+            UpdateState();
 
-            var EnvStep = new {
-                obs = FlatObs,
-                reward = rewardAccumulator
-            };
-            
-            string json = JsonSerializer.Serialize(EnvStep);
-            ConnectionManager.EnqueueObservation(json);
-
-            //update State
-            rewardAccumulator = 0f;
-            lastInventoryState = newInventoryState;
-            lastAction = ConnectionManager.ConsumeAction();
+            IsDeadLastTick = isDeadNow;
 		}
         public override void OnHurt(Player.HurtInfo info)
         {
@@ -267,8 +265,62 @@ namespace RL_API
 
             return reward;
         }
+        private void UpdateState()
+        {
+            // Capture new inventory
+            currentInventoryState = new(Player.inventory);
 
+            if (lastInventoryState == null)
+            {
+                lastInventoryState = currentInventoryState;
+            }
+            else
+            {
+                rewardAccumulator += CalculatePickupReward(previousInv: lastInventoryState, currentInv: currentInventoryState);
+            }
 
+            // Gather full Observation
+            RLObservation currentObs = RLObsCollector.CollectObservation(Player);
+            currentObs.InvState = currentInventoryState;
+
+            // Compress
+            var compressed = RLObsCompressor.Compress(currentObs);
+            currentCompressedObs = compressed.Flatten(); // flatten if needed
+        }
+        float[] currentCompressedObs;
+        InventoryState currentInventoryState;
+        private void SendObservation(bool isDone)
+        {
+            if (prevObs == null)
+            {
+                prevObs = currentCompressedObs;
+                return; // Wait another tick before sending (This is for the first tick on spawn)
+            }
+
+            var EnvStepPacket = new RLStepPacket
+            {
+                Obs = prevObs,
+                Reward = rewardAccumulator,
+                NextObs = currentCompressedObs,
+                Done = isDone
+            };
+
+            string json = JsonSerializer.Serialize(EnvStepPacket);
+            ConnectionManager.EnqueueObservation(json);
+
+            // Update state for next tick
+            prevObs = currentCompressedObs;
+            rewardAccumulator = 0f;
+            lastInventoryState = currentInventoryState;
+            lastAction = ConnectionManager.ConsumeAction();
+        }
 
     }
+}
+public class RLStepPacket
+{
+    public float[] Obs { get; set; }
+    public float Reward { get; set; }
+    public float[] NextObs { get; set; }
+    public bool Done { get; set; }
 }
