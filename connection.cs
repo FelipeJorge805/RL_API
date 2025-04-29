@@ -161,8 +161,7 @@ namespace RL_API
         // Static factory method for manual creation
         public static AgentAction Create(string move, string action, float[] cursor, bool shift)
         {
-            ModContent.GetInstance<RL_API>()
-                        .Logger.Info("Creating Agent: " + move+", "+action+", "+cursor+", "+shift);
+            //ModContent.GetInstance<RL_API>().Logger.Info("Creating Agent: " + move+", "+action+", "+cursor+", "+shift);
             return new AgentAction
             {
                 Move = move,

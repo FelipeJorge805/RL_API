@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
+using System.Configuration;
 
 namespace RL_API
 {
@@ -28,11 +29,19 @@ namespace RL_API
         public override void OnEnterWorld()
         {
             base.OnEnterWorld();
+            while(Player == null && Player.inventory == null) { } //wait for inventory to be initialized
             lastInventoryState = new InventoryState(Player.inventory);
             lastAction = AgentAction.Create("still","none",[0f,0f],false);
         }
+        
+        /*public override void CopyClientState(ModPlayer targetCopy)
+        {
+            base.CopyClientState(targetCopy);
+            while(Player == null && targetCopy == null && Player.active) { } //wait for inventory to be initialized
+        }*/
         public override void SetControls()
 		{
+            Main.hasFocus = true; // Set focus to true to prevent the game from pausing when alt-tabbing
             if(discardCooldown>=0)discardCooldown--;
             newAction = ConnectionManager.PeekAction();
             //Main.NewText("action: " + newAction.Action + " move: " + newAction.move + " shift: " + action.shift + " cursor: " + action.cursor);
@@ -313,6 +322,11 @@ namespace RL_API
             rewardAccumulator = 0f;
             lastInventoryState = currentInventoryState;
             lastAction = ConnectionManager.ConsumeAction();
+        }
+        public override void Unload()
+        {
+            base.Unload();
+            ConnectionManager.Close();
         }
 
     }
