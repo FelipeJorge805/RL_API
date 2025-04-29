@@ -16,6 +16,13 @@ def launch_server():
         [batch_path, "-config", config_path],
         cwd=server_folder
     )
+    proc = subprocess.Popen([
+        "./start-tModLoaderServer.sh",
+        "-port", "7777",
+        "-pass", "",
+        "-players", "4"
+    ], cwd="/home/youruser/tModLoaderFolder")
+
     time.sleep(10)  # Give server time to boot
     return proc
 

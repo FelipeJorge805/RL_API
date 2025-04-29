@@ -32,5 +32,14 @@ def terraria_instance(agent_id, base_path=r"D:\SteamLibrary\steamapps\common\Tmo
         "-port", "7777",
         "-pass", "mypassword"
     ], cwd=agent_folder)
+    
+    subprocess.Popen([
+        "path./start-tModLoader.sh",
+        f"--agent{agent_id}",
+        "-playersave", f"Agent{agent_id + 1}",
+        "-ip", "127.0.0.1",
+        "-port", "7777",
+        "-pass", "mypassword"
+    ], cwd="/home/youruser/tModLoaderFolder")
 
     time.sleep(5)  # Delay to avoid overloading
