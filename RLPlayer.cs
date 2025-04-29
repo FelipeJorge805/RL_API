@@ -12,8 +12,8 @@ namespace RL_API
     class RLPlayer() : ModPlayer
     {
         float[] prevObs;
-        bool isDone = false;
-        List<TileInfo> tiles;
+        //bool isDone = false;
+        //List<TileInfo> tiles;
         int hertz = 1;
         //private static string lastKnownAction = "none";
         AgentAction lastAction;
@@ -44,21 +44,23 @@ namespace RL_API
             Main.hasFocus = true; // Set focus to true to prevent the game from pausing when alt-tabbing
             if(discardCooldown>=0)discardCooldown--;
             newAction = ConnectionManager.PeekAction();
-            //Main.NewText("action: " + newAction.Action + " move: " + newAction.move + " shift: " + action.shift + " cursor: " + action.cursor);
-            if(lastAction==null){
+            
+            if(lastAction==null){ // this is for edge cases like initial world join
                 lastAction=newAction;
                 return;
             }
             
-            if(newAction!=null) Main.NewText("Cursor: "+newAction.Cursor);
+            if(newAction!=null){
+                lastAction.Move = newAction.Move;
+                lastAction.Action = newAction.Action;
+                lastAction.Cursor = newAction.Cursor;
+                lastAction.Shift = newAction.Shift;
+            }
 
             //shift modifier
-            if(newAction!= null && lastAction.Shift != newAction.Shift) lastAction.Shift = newAction.Shift;
-            if(newAction!= null && newAction.Shift) Player.controlSmart = true;
+            if(lastAction.Shift) Player.controlSmart = true;
 
-            if(newAction!= null && lastAction.Move!=newAction.Move) lastAction.Move = newAction.Move; 
             // Handle movement
-            //Main.NewText("last action: "+lastAction);
             switch (lastAction.Move)
             {
                 case "left":
@@ -80,7 +82,7 @@ namespace RL_API
 
             if (newAction == null) return; //was up top but I want to hold movement and shift keys for more ticks
 
-            switch (newAction.Action)
+            switch (newAction.Action) //deliberate use of newAction instead of last
             {
                 case "use_item":
                     Player.controlUseItem = true;
@@ -101,6 +103,8 @@ namespace RL_API
                     //SwapHotbarItems(); // Your custom function
                     break;
                 case "discard":
+                    rewardAccumulator -= 0.1f;
+                    break;
                     if(discardCooldown<0){
                         Player.controlThrow = true;
                         rewardAccumulator -= 2f;
@@ -126,13 +130,7 @@ namespace RL_API
                 case "hotbar_7":
                 case "hotbar_8":
                 case "hotbar_9":
-                    int hotbarSlot = int.Parse(newAction.Action.Split('_')[1]);
-                    Player.selectedItem = hotbarSlot;
-                    Item selectedItem = Player.inventory[Player.selectedItem];
-                    bool isHotbarSlotEmpty = selectedItem == null || selectedItem.stack == 0 || selectedItem.type == ItemID.None;
-                    if(isHotbarSlotEmpty){
-                        rewardAccumulator -= 1f;
-                    }
+                    rewardAccumulator += hotbarSwapSelectedReward(newAction.Action);
                     break;
                 case "none":
                     // Do nothing
@@ -166,6 +164,7 @@ namespace RL_API
 
             if (!IsDeadLastTick && isDeadNow)
             {
+                rewardAccumulator -= 10f;
                 SendObservation(isDone: true);
                 UpdateState();                
                 IsDeadLastTick = isDeadNow;
@@ -173,18 +172,22 @@ namespace RL_API
             }
 
             //run every tick
-            if(newAction==null && lastAction!=null){ //not sure if this actually saves much cpu power
-                Main.mouseX = (int)lastAction.Cursor[0];
-                Main.mouseY = (int)lastAction.Cursor[1];
-            }else if(newAction!=null){
-                (Main.mouseX , Main.mouseY) = MapCursorBounds(newAction.Cursor[0],newAction.Cursor[1],Player.Center,16f*16f); //16 blocks * 16 pixels per block: radius
+            if (lastAction?.Cursor != null)
+            {
+                (Main.mouseX, Main.mouseY) = MapCursorBounds(
+                    lastAction.Cursor[0],
+                    lastAction.Cursor[1],
+                    Player.Center,
+                    8f * 16f // 8 tiles * 16 pixels
+                );
             }
+
 
             // Normal hertz control
             if (Main.GameUpdateCount % hertz != 0)
                 return;
 
-            //Main.NewText("Reward: " + rewardAccumulator);
+            Main.NewText("Reward: " + rewardAccumulator);
             SendObservation(isDone: false);
             UpdateState();
 
@@ -329,6 +332,15 @@ namespace RL_API
             ConnectionManager.Close();
         }
 
+        public float hotbarSwapSelectedReward(string action){
+            int hotbarSlot = int.Parse(action.Split('_')[1]);
+            Player.selectedItem = hotbarSlot;
+            Item selectedItem = Player.inventory[Player.selectedItem];
+            bool isHotbarSlotEmpty = selectedItem == null || selectedItem.stack == 0 || selectedItem.type == ItemID.None;
+            if(isHotbarSlotEmpty){
+                return -0.2f;
+            } else return .1f; //can't be same otherwise model stuck swaping focus all the time
+        }
     }
 }
 public class RLStepPacket
