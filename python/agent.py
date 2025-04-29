@@ -44,6 +44,7 @@ class TerrariaAgent(nn.Module):
         self.action_head = nn.Linear(128, len(MAIN_ACTIONS))
         self.cursor_head = nn.Linear(128, 2)
         self.shift_head = nn.Linear(128, 1)
+        self.value_head = nn.Linear(128, 1)
 
     def forward(self, x):
         x = self.shared(x)
@@ -52,7 +53,8 @@ class TerrariaAgent(nn.Module):
         action_logits = self.action_head(x)
         cursor_delta = self.cursor_head(x)
         shift_logit = self.shift_head(x)
+        value_logits = self.value_head(x)
 
         shift_prob = torch.sigmoid(shift_logit)
-
-        return move_logits, action_logits, cursor_delta, shift_prob
+        
+        return move_logits, action_logits, cursor_delta, shift_prob, value_logits
