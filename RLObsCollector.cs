@@ -22,7 +22,7 @@ namespace RL_API
                 PositionY = player.position.Y,
 
                 // Tiles around the player (replace this with your tile scanning code)
-                TilesAround = Tile_Scan.scanTiles(player, 5),
+                TilesAround = Tile_Scan.scanTiles(player, 8),
 
                 // Combat info
                 Health = player.statLife,

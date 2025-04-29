@@ -5,22 +5,22 @@ namespace RL_API
 {
     public class RLObservation
     {
-        //add dropped items or unlooted items
-        public List<RLItemObservation> NearItems { get; set; } // ItemScanner.scan(player_pos);
-
-        public InventoryState InvState { get; set;}
-
         //add max hp / max mana
-        // day time or time ? if outside or with clock
+        // day time or gameticks ? if outside or with clock
         //radar increases unit scan radius (might lag)
         //item states / inventory / free slots/full
         //possible crafts
         //is drowning?
         //can swim?
         //max speed?
-        //sort
-        //quick stack
-        //shift delete trashcan
+        //sort inv button / quick stack // shift delete trashcan
+        //add small incentive for exploring a tile every x tiles, maybe 25?
+        //is raining/blizzard/sandtorms
+        //glowstick on the ground? spike balls
+        //ensure gravestones are counted in tileScan
+        public List<RLItemObservation> NearItems { get; set; } // ItemScanner.scan(player_pos);
+
+        public InventoryState InvState { get; set;}
 
         // Player movement
         public float VelocityX { get; set; }

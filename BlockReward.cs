@@ -21,7 +21,7 @@ public static class BlockGatherReward
         //item type for most items should be reduced to categories: isPickaxe, isAxe, isBlock, etc.
         //reward for putting a pickaxe in the hotbar should be given according to pickaxe power
         //rewarding a pickaxe swap in the same slot should be calculated based on pickaxe power
-        //new axe/sword in inventory? calculate reward based on axe power or damage (or also the difference based on existing tools)
+        //new axe/sword in inventory? calculate reward based on axe power or damage (or also the difference in power based on existing tools)
 
         // Special pickups
         if (itemType == ItemID.Heart)
@@ -31,18 +31,18 @@ public static class BlockGatherReward
 
         // Coin pickup reward
         if (itemType == ItemID.CopperCoin)
-            return 0.1f;
+            return 0.01f * inventoryAmount;
         if (itemType == ItemID.SilverCoin)
-            return 1f;
+            return 0.1f * inventoryAmount;
         if (itemType == ItemID.GoldCoin)
-            return 100f;
+            return 1f * inventoryAmount;
         if (itemType == ItemID.PlatinumCoin)
-            return 10_000f; 
+            return 100f * inventoryAmount; 
 
-        // REMOVE THIS LATER BRUV AAHHH
+        // REMOVE THIS LATER
         // Normal block gathering
         if (inventoryAmount <= 0)
-            return 1.0f;
+            return 1.0f * inventoryAmount;
 
         if (LinearRewardBlocks.Contains(itemType))
         {
