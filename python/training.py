@@ -68,9 +68,9 @@ while True:
 
             move_logits, action_logits, cursor_delta, shift_logit = model(features0)
 
-            # Dummy simple loss: reward as MSE to zero (placeholder)
-            target = torch.tensor([[rew0]], dtype=torch.float32)
-            output = move_logits.mean().unsqueeze(0).unsqueeze(0)  # Example: mean move prediction
+            
+            #target = torch.tensor([[rew0]], dtype=torch.float32)
+            #output = move_logits.mean().unsqueeze(0).unsqueeze(0)  # Example: mean move prediction
             loss = MSELoss()
 
             optimizer.zero_grad()
