@@ -41,6 +41,7 @@ namespace RL_API
         }*/
         public override void SetControls()
 		{
+            if (Player.whoAmI != Main.myPlayer) return;
             Main.hasFocus = true; // Set focus to true to prevent the game from pausing when alt-tabbing
             if(discardCooldown>=0)discardCooldown--;
             newAction = ConnectionManager.PeekAction();
@@ -142,28 +143,41 @@ namespace RL_API
         public override void PreUpdateBuffs()
         {
             base.PreUpdateBuffs();
+            if (Player.whoAmI != Main.myPlayer) return;
+            Main.hasFocus = true;
         }
 
         public override void ResetEffects()
         {
             base.ResetEffects();
+            if (Player.whoAmI != Main.myPlayer) return;
+            Main.hasFocus = true;
         }
 
         public override void PreUpdateMovement()
         {
             base.PreUpdateMovement();
+            if (Player.whoAmI != Main.myPlayer) return;
+            Main.hasFocus = true;
         }
 		public override void PreUpdate()
     	{
 			//base.PreUpdate();
-			
+			if (Player.whoAmI != Main.myPlayer) return;
+            Main.hasFocus = true;
 		}
 		public override void PostUpdate()
 		{
+            //Main.NewText($"[Tick {Main.GameUpdateCount}] hasFocus: {Main.hasFocus}");
+            if (Player.whoAmI != Main.myPlayer) return;
+            Main.hasFocus = true;
+            //Main.NewText($"Focus: {Main.hasFocus}, player: {Player.whoAmI == Main.myPlayer}");
             bool isDeadNow = Player.dead;
+            //Player.whoAmI = Main.LocalPlayer
 
             if (!IsDeadLastTick && isDeadNow)
             {
+                Main.NewText("Dead! haha noob AI");
                 rewardAccumulator -= 10f;
                 SendObservation(isDone: true);
                 UpdateState();                
@@ -187,6 +201,8 @@ namespace RL_API
             if (Main.GameUpdateCount % hertz != 0)
                 return;
 
+            //Main.NewText($"Agent running for player {Player.name}, myPlayer: {Main.myPlayer}");
+            //ModContent.GetInstance<RL_API>().Logger.Info($"Agent running for player {Player.name}, myPlayer: {Main.myPlayer}");
             //Main.NewText("Reward: " + rewardAccumulator);
             SendObservation(isDone: false);
             UpdateState();
