@@ -37,13 +37,13 @@ namespace RL_API
                 _reader = new StreamReader(stream);
                 _writer = new StreamWriter(stream) { AutoFlush = true };
 
-                ModContent.GetInstance<RL_API>().Logger.Info($"[RL] Connected to {host}:{port}");
+                ModContent.GetInstance<RL_API>().Logger.Info($"[RL] Socket Connected to {host}:{port}");
 
                 Task.Run(() => IoLoop());
             }
             catch (Exception ex)
             {
-                ModContent.GetInstance<RL_API>().Logger.Error($"[RL] Connection error: {ex.Message}");
+                ModContent.GetInstance<RL_API>().Logger.Error($"[RL] Socket Connection error: {ex.Message}");
             }
         }
 
@@ -109,6 +109,7 @@ namespace RL_API
                     {
                         _latestAction = JsonSerializer.Deserialize<AgentAction>(reply);
                     }
+                    ModContent.GetInstance<RL_API>().Logger.Info($"[RL] Received raw reply: {reply}");
                     //ModContent.GetInstance<RL_API>().Logger.Info("Received Action: " + _latestAction);
                 }
                 catch (Exception ex)

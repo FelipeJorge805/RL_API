@@ -38,6 +38,7 @@ def handle_agent_connection(conn, addr, agent_id):
                 if not line:
                     print(f"[Agent {agent_id}] Disconnected.")
                     break
+                print(f"[Agent {agent_id}] Raw line: {line}")
 
                 packet = json.loads(line.decode('utf-8'))
                 obs = packet["Obs"]

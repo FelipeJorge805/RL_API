@@ -39,6 +39,7 @@ def compute_returns(rewards, dones, values, gamma=GAMMA):
 
 while True:
     packet = ss.receive_packet(conn)
+    
     obs = packet["Obs"]
     reward = packet["Reward"]
     done = packet.get("isDone", False)

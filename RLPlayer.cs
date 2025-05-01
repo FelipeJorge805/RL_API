@@ -187,7 +187,7 @@ namespace RL_API
             if (Main.GameUpdateCount % hertz != 0)
                 return;
 
-            Main.NewText("Reward: " + rewardAccumulator);
+            //Main.NewText("Reward: " + rewardAccumulator);
             SendObservation(isDone: false);
             UpdateState();
 
