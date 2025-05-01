@@ -3,7 +3,7 @@ import os
 import time
 
 def launch_server():
-    server_folder = r"D:\SteamLibrary\steamapps\common\tModLoader"  # <-- Change this to your server folder
+    server_folder = r"C:\Steam\steamapps\common\tModLoader"  # <-- Change this to your server folder
     batch_path = os.path.join(server_folder, "start-tModLoaderServer.bat")  # <-- THIS instead of tModLoader.exe
     config_path = os.path.join(server_folder, "serverconfig.txt")
     
@@ -13,16 +13,16 @@ def launch_server():
     print("[Server] Launching Terraria Server...")
 
     proc = subprocess.Popen(
-        [batch_path, "-config", config_path],
+        [batch_path, "-config", "-nosteam", config_path],
         cwd=server_folder
     )
-    proc = subprocess.Popen([
+    '''proc = subprocess.Popen([
         "./start-tModLoaderServer.sh",
         "-port", "7777",
         "-pass", "",
         "-players", "4"
     ], cwd="/home/youruser/tModLoaderFolder")
-
+    '''
     time.sleep(10)  # Give server time to boot
     return proc
 
