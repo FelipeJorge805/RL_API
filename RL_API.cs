@@ -31,10 +31,10 @@ namespace RL_API
             
             string configPath;
             try{
-                configPath = Path.Combine("D:/SteamLibrary/steamapps/common/Tmods", "client_config.json");
+                configPath = Path.Combine("C:/Steam/steamapps/common/Tmods", "client_config.json");
                 if (!File.Exists(configPath))
                 {
-                    Logger.Warn("No client_config.json found, skipping.");
+                    Logger.Warn("\n\nNo client_config.json found, skipping.\n");
                     Logger.Warn("Path: "+Main.SavePath);
                     return;
                 }
@@ -56,7 +56,9 @@ namespace RL_API
 
                 await Task.Delay(10_000);
 
-                if (Main.gameMenu)
+                if (Main.gameMenu &&
+                    Main.player[Main.myPlayer] != null &&
+                    !string.IsNullOrWhiteSpace(Main.player[Main.myPlayer].name))
                 {
                     try
                     {
