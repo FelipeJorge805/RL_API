@@ -4,7 +4,6 @@ import time
 import json
 import socket
 import threading
-
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
@@ -17,7 +16,7 @@ NUM_AGENTS = 2  # Change to how many agents you want
 SERVER_IP = "127.0.0.1"
 SERVER_PORT = 7777
 AGENT_BASE_PORT = 5000
-BASE_PATH = r"D:\SteamLibrary\steamapps\common\Tmods"  # Where your tModLoader_Agent folders are
+BASE_PATH = r"C:\Steam\steamapps\common\Tmods"  # Where your tModLoader_Agent folders are
 
 def handle_agent_connection(conn, addr, agent_id):
     print(f"[Agent {agent_id}] Connected for training.")
@@ -38,15 +37,17 @@ def handle_agent_connection(conn, addr, agent_id):
                 if not line:
                     print(f"[Agent {agent_id}] Disconnected.")
                     break
-                print(f"[Agent {agent_id}] Raw line: {line}")
+                print(f"[Agent {agent_id}] Raw line: received")
 
                 packet = json.loads(line.decode('utf-8'))
                 obs = packet["Obs"]
                 reward = packet["Reward"]
-                done = packet.get("isDone", False)
-
+                next_obs = packet["NextObs"]
+                done = packet.get("Done", False)
+                
+                #print("after packet")
                 obs_tensor = torch.tensor(obs, dtype=torch.float32).unsqueeze(0)
-                move_logits, action_logits, cursor_delta, shift_logit = model(obs_tensor)
+                move_logits, action_logits, cursor_delta, shift_logit, value_logit = model(obs_tensor)
 
                 move_idx = torch.multinomial(F.softmax(move_logits, dim=-1), num_samples=1).item()
                 action_idx = torch.multinomial(F.softmax(action_logits, dim=-1), num_samples=1).item()
@@ -60,6 +61,7 @@ def handle_agent_connection(conn, addr, agent_id):
                     "Shift": shift_active
                 }
 
+                #print(f"before sending. Reply: {reply}")
                 # Send action back
                 payload = json.dumps(reply).encode('utf-8') + b'\n'
                 stream.write(payload)
