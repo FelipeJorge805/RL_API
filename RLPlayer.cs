@@ -319,10 +319,13 @@ namespace RL_API
         InventoryState currentInventoryState;
         private void SendObservation(bool isDone)
         {
+            //(This is for the first tick on spawn)
             if (prevObs == null)
             {
                 prevObs = currentCompressedObs;
-                return; // Wait another tick before sending (This is for the first tick on spawn)
+                string inputjson = "{\"input_size\":prevObs.Length}";
+                ConnectionManager.EnqueueObservation(inputjson); //send only the input size on the first tick of world join
+                return; 
             }
 
             var EnvStepPacket = new RLStepPacket
