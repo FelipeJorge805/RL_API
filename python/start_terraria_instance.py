@@ -43,4 +43,4 @@ def terraria_instance(agent_id, base_path=r"D:\SteamLibrary\steamapps\common\Tmo
     ], cwd="/home/youruser/tModLoaderFolder")
     '''
     
-    time.sleep(5)  # Delay to avoid overloading
+    time.sleep(10)  # Delay to avoid overloading

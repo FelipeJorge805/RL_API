@@ -2,8 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# All available 'moves' 
 MOVEMENT_ACTIONS = ["left", "right", "still", "up", "down"]
 
+# All available 'actions' (for now)
 MAIN_ACTIONS = [
     "use_item",
     "jump",
@@ -28,7 +30,8 @@ MAIN_ACTIONS = [
     "none"
 ]
 
-
+# Agent class to be trained.
+# Currently 5 heads: movement, action, cursor, shift and value (ppo)
 class TerrariaAgent(nn.Module):
     def __init__(self, input_size):
         super().__init__()
