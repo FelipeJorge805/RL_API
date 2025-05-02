@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical, Bernoulli
 
-import socket_Server as ss
+import python.old.socket_Server as ss
 import agent as a
 
 # === Hyperparameters ===

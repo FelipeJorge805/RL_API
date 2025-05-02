@@ -5,7 +5,7 @@ import json
 
 from torch.nn import MSELoss
 
-import socket_Server as ss
+import python.old.socket_Server as ss
 import agent as a
 
 conn = ss.start_rl_server()
