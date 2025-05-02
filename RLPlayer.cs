@@ -179,8 +179,9 @@ namespace RL_API
             {
                 Main.NewText("Dead! haha noob AI");
                 rewardAccumulator -= 10f;
+                UpdateObs();                
                 SendObservation(isDone: true);
-                UpdateState();                
+                UpdateState();
                 IsDeadLastTick = isDeadNow;
                 return;
             }
@@ -204,6 +205,7 @@ namespace RL_API
             //Main.NewText($"Agent running for player {Player.name}, myPlayer: {Main.myPlayer}");
             //ModContent.GetInstance<RL_API>().Logger.Info($"Agent running for player {Player.name}, myPlayer: {Main.myPlayer}");
             //Main.NewText("Reward: " + rewardAccumulator);
+            UpdateObs();
             SendObservation(isDone: false);
             UpdateState();
 
@@ -293,7 +295,7 @@ namespace RL_API
 
             return reward;
         }
-        private void UpdateState()
+        private void UpdateObs()
         {
             // Capture new inventory
             currentInventoryState = new(Player.inventory);
@@ -338,7 +340,8 @@ namespace RL_API
 
             string json = JsonSerializer.Serialize(EnvStepPacket);
             ConnectionManager.EnqueueObservation(json);
-
+        }
+        public void UpdateState(){
             // Update state for next tick
             prevObs = currentCompressedObs;
             rewardAccumulator = 0f;

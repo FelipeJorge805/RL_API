@@ -2,6 +2,9 @@ import subprocess
 import os
 import time
 
+# Starts a terraria server using the tModLoader serverconfig file
+# Attempts to find files on path server_folder
+# Starts a subprocess and keeps it open
 def launch_server():
     server_folder = r"C:\Steam\steamapps\common\tModLoader"  # <-- Change this to your server folder
     batch_path = os.path.join(server_folder, "start-tModLoaderServer.bat")  # <-- THIS instead of tModLoader.exe
