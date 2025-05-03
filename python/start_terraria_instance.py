@@ -10,7 +10,7 @@ import time
 # Starts a subprocess with the configs set
 # sleeps between each client spawn
 def terraria_instance(agent_id, base_path=r"D:\SteamLibrary\steamapps\common\Tmods", base_folder_name="tModLoader", server_ip="127.0.0.1", server_port=7777, agent_base_port=5000):
-    agent_folder = os.path.join(base_path, f"{base_folder_name}{agent_id+1}")  # Folder names: tModLoader1, tModLoader2, etc.
+    agent_folder = os.path.join(base_path, f"{base_folder_name}{agent_id}")  # Folder names: tModLoader0, tModLoader1, etc.
     exe_path = os.path.join(agent_folder, "start-tModLoader.bat")
 
     if not os.path.exists(exe_path):
@@ -42,7 +42,7 @@ def terraria_instance(agent_id, base_path=r"D:\SteamLibrary\steamapps\common\Tmo
     '''subprocess.Popen([
         "path./start-tModLoader.sh",
         f"--agent{agent_id}",
-        "-playersave", f"Agent{agent_id + 1}",
+        "-playersave", f"Agent{agent_id}",
         "-ip", "127.0.0.1",
         "-port", "7777",
         "-pass", "mypassword"

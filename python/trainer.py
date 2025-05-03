@@ -7,8 +7,9 @@ import threading
 from config import BATCH_SIZE, TRAIN_INTERVAL, SAVE_INTERVAL, MODEL_PATH
 import agent
 
-# Settings
-global_model = agent.TerrariaAgent(155)
+# Settings (using GPU through CUDA)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+global_model = agent.TerrariaAgent(155).to(device)
 optimizer = optim.Adam(global_model.parameters(), lr=1e-4)
 loss_fn = MSELoss()
 experience_buffer = []
@@ -17,9 +18,9 @@ buffer_lock = threading.Lock()
 # Trains the model using Batching, and Settings above
 def train_batch(batch):
     for (obs0, act0, rew0, obs1) in batch:
-        features0 = torch.tensor(obs0, dtype=torch.float32).unsqueeze(0)
-        move_logits, action_logits, cursor_delta, shift_logit = global_model(features0)
-        target = torch.tensor([[rew0]], dtype=torch.float32)
+        features0 = torch.tensor(obs0, dtype=torch.float32).unsqueeze(0).to(device)
+        move_logits, action_logits, cursor_delta, shift_logit, value = global_model(features0)
+        target = torch.tensor([[rew0]], dtype=torch.float32).to(device)
         output = move_logits.mean().unsqueeze(0).unsqueeze(0)
         loss = loss_fn(output, target)
         optimizer.zero_grad()

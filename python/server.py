@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 import socket
 import threading
-from trainer import global_model, experience_buffer, buffer_lock
+from trainer import global_model, experience_buffer, buffer_lock, device
 from config import AGENT_BASE_PORT, NUM_AGENTS, SERVER_IP
 import agent
 
@@ -27,28 +27,41 @@ def handle_agent_connection(conn, addr, agent_id):
     with conn, conn.makefile('rwb') as stream:
         try:
             while True:
+                #print("before line read")
                 line = stream.readline()
+                #print("After line read")
                 if not line:
                     print(f"[Agent {agent_id}:{client_port}] Disconnected.")
                     break
-
-                # Receive data
+                
                 packet = json.loads(line.decode('utf-8'))
+                #print("packet exists")
+                #print(f"[Agent {agent_id}] Received: {line.decode('utf-8').strip()}")
+                # Receive input_size # Firt tick only
+                if "input_size" in packet:
+                    input_size = packet["input_size"]
+                    stream.write(json.dumps({ "Move": "Still", "Action": "None", "Cursor": [0, 0], "Shift": False }).encode('utf-8') + b'\n')
+                    stream.flush()
+                    #print(f"[Agent {agent_id}] Replied to init.")
+                    #model = build_model(input_size)
+                    continue
+                #print("first tick done")
+                # Receive data
                 obs = packet["Obs"]
                 reward = packet["Reward"]
                 done = packet.get("isDone", False)
 
-                obs_tensor = torch.tensor(obs, dtype=torch.float32).unsqueeze(0)
-
+                obs_tensor = torch.tensor(obs, dtype=torch.float32).unsqueeze(0).to(device)
+                #print("before mapping")
                 # Map model Input
                 with torch.no_grad():
-                    move_logits, action_logits, cursor_delta, shift_logit = global_model(obs_tensor)
+                    move_logits, action_logits, cursor_delta, shift_logit, value = global_model(obs_tensor)
 
                 move_idx = torch.multinomial(F.softmax(move_logits, dim=-1), num_samples=1).item()
                 action_idx = torch.multinomial(F.softmax(action_logits, dim=-1), num_samples=1).item()
                 cursor_output = torch.tanh(cursor_delta).detach().cpu().numpy()[0]
                 shift_active = torch.sigmoid(shift_logit).item() > 0.5
-
+                #print("before reply")
                 reply = {
                     "Move": agent.MOVEMENT_ACTIONS[move_idx],
                     "Action": agent.MAIN_ACTIONS[action_idx],
@@ -58,7 +71,7 @@ def handle_agent_connection(conn, addr, agent_id):
 
                 stream.write(json.dumps(reply).encode('utf-8') + b'\n')
                 stream.flush()
-
+                #print("after flush")
                 # Save for batching
                 if last_obs is not None:
                     with buffer_lock:
@@ -89,7 +102,9 @@ def handle_agent_connection(conn, addr, agent_id):
                         if not done:
                             last_obs = obs
                             break
-                        time.sleep(0.5)
+                        time.sleep(5)
+                
+                time.sleep(0.02)  # 20 milliseconds
 
         except Exception as e:
             print(f"[Agent {agent_id}:{client_port}] Error: {e}")
@@ -103,14 +118,19 @@ def start_training_servers():
     for agent_id in range(NUM_AGENTS):
         port = AGENT_BASE_PORT + agent_id
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind((SERVER_IP, port))
         server.listen(1)
-        print(f"[Socket] Listening for Agent {agent_id} on port {port}")
+        print(f"[Socket] Waiting for Agent {agent_id} on port {port}...")
 
-        def accept_connection(server_socket, agent_id):
-            conn, addr = server_socket.accept()
-            threading.Thread(target=handle_agent_connection, args=(conn, addr, agent_id), daemon=True).start()
+        conn, addr = server.accept()
+        print(f"[Agent {agent_id}:{addr[1]}] Connected.")
+        threading.Thread(
+            target=handle_agent_connection,
+            args=(conn, addr, agent_id),
+            daemon=True
+        ).start()
 
-        threading.Thread(target=accept_connection, args=(server, agent_id), daemon=True).start()
         servers.append(server)
+
     return servers
