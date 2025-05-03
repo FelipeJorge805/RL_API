@@ -58,6 +58,22 @@ namespace RL_API
                 lastAction.Shift = newAction.Shift;
             }
 
+            if (lastAction?.Cursor != null)
+            {
+                var (mouseX, mouseY, tileTarget) = MapCursorBounds(
+                    lastAction.Cursor[0], lastAction.Cursor[1], Player.Center, 8f * 16f
+                );
+                
+                //Set every tick
+                Player.tileTargetX = tileTarget.X;
+                Player.tileTargetY = tileTarget.Y;
+                
+                if (Main.GameUpdateCount % hertz != 0) return;
+                //set only every hertz tick (10/s currently)
+                Main.mouseX = mouseX;
+                Main.mouseY = mouseY;
+            }
+
             //shift modifier
             if(lastAction.Shift) Player.controlSmart = true;
 
@@ -185,7 +201,7 @@ namespace RL_API
                 IsDeadLastTick = isDeadNow;
                 return;
             }
-
+/*
             //run every tick
             if (lastAction?.Cursor != null)
             {
@@ -196,7 +212,7 @@ namespace RL_API
                     8f * 16f // 8 tiles * 16 pixels
                 );
             }
-
+*/
 
             // Normal hertz control
             if (Main.GameUpdateCount % hertz != 0)
@@ -265,21 +281,34 @@ namespace RL_API
                 rewardAccumulator += 5f; // Big reward for killing enemy
             }
         }
-        public static (int, int) MapCursorBounds(float nnX, float nnY, Vector2 playerCenter, float radius)
+        public static (int mouseX, int mouseY, Point tileTarget) MapCursorBounds(
+            float nnX, float nnY, Vector2 playerCenter, float radiusPx)
         {
-            // Clamp inputs just in case (optional)
             nnX = Math.Clamp(nnX, -1f, 1f);
             nnY = Math.Clamp(nnY, -1f, 1f);
 
-            // Map [-1, 1] to circle around player
-            float offsetX = nnX * radius;
-            float offsetY = nnY * radius;
+            float offsetX = nnX * radiusPx;
+            float offsetY = nnY * radiusPx;
 
-            float cursorX = playerCenter.X + offsetX;
-            float cursorY = playerCenter.Y + offsetY;
+            float absX = Math.Abs(offsetX);
+            float absY = Math.Abs(offsetY);
+            if (absX + absY > radiusPx)
+            {
+                float scale = radiusPx / (absX + absY);
+                offsetX *= scale;
+                offsetY *= scale;
+            }
 
-            return ((int)(cursorX - Main.screenPosition.X), (int)(cursorY-Main.screenPosition.Y));
+            float worldX = playerCenter.X + offsetX;
+            float worldY = playerCenter.Y + offsetY;
+
+            int mouseX = (int)(worldX - Main.screenPosition.X);
+            int mouseY = (int)(worldY - Main.screenPosition.Y);
+            Point tileTarget = new((int)(worldX / 16f), (int)(worldY / 16f));
+
+            return (mouseX, mouseY, tileTarget);
         }
+
 
         public static float CalculatePickupReward(InventoryState previousInv, InventoryState currentInv)
         {
@@ -325,7 +354,8 @@ namespace RL_API
             if (prevObs == null)
             {
                 prevObs = currentCompressedObs;
-                string inputjson = "{\"input_size\":prevObs.Length}";
+                string inputjson = "{\"input_size\":"+prevObs.Length+"}";
+                //ModContent.GetInstance<RL_API>().Logger.Info("Sending Packet: "+inputjson);
                 ConnectionManager.EnqueueObservation(inputjson); //send only the input size on the first tick of world join
                 return; 
             }
@@ -339,6 +369,7 @@ namespace RL_API
             };
 
             string json = JsonSerializer.Serialize(EnvStepPacket);
+            //ModContent.GetInstance<RL_API>().Logger.Info("Sending Packet: "+json);
             ConnectionManager.EnqueueObservation(json);
         }
         public void UpdateState(){
