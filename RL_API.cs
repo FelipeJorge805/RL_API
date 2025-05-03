@@ -19,7 +19,7 @@ namespace RL_API
                 Logger.Info("\n\nNon Agent mode detected, skipping join loop.\n");
                 return;
             }else{
-                StartJoinLoop();
+                //StartJoinLoop(); commented out for simplicity while testing socket connections
                 LoopHasBeenCalled = true;
                 Logger.Info("\n\nAgent mode detected, starting join loop.\n");
             }
@@ -38,7 +38,7 @@ namespace RL_API
                     Logger.Warn("Path: "+Main.SavePath);
                     return;
                 }
-            }catch (System.Exception ex)
+            }catch (Exception ex)
             {
                 Logger.Error($"Error loading config: {ex}");
                 return;
