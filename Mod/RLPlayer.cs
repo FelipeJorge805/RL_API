@@ -169,6 +169,26 @@ namespace RL_API
             base.PreUpdateMovement();
             if (Player.whoAmI != Main.myPlayer) return;
             Main.hasFocus = true;
+            
+            // Handle movement
+            switch (lastAction.Move)
+            {
+                case "left":
+                    Player.controlLeft = true;
+                    break;
+                case "right":
+                    Player.controlRight = true;
+                    break;
+                case "up":
+                    Player.controlUp = true;
+                    break;
+                case "down":
+                    Player.controlDown = true;
+                    break;
+                case "still":
+                    // Do nothing
+                    break;
+            }
         }
 		public override void PreUpdate()
     	{
