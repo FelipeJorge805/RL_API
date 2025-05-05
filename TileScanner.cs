@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace RL_API
 {
-	public static class Tile_Scan
+	public static class TileScanner
 	{
 		public static List<TileInfo> scanTiles(Player player, int radius){
 

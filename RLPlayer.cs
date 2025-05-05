@@ -11,7 +11,9 @@ namespace RL_API
 {
     class RLPlayer() : ModPlayer
     {
-        float[] prevObs;
+        float[] prevObs;        
+        float[] currentCompressedObs;
+        InventoryState currentInventoryState;
         //bool isDone = false;
         //List<TileInfo> tiles;
         int hertz = 1;
@@ -201,18 +203,6 @@ namespace RL_API
                 IsDeadLastTick = isDeadNow;
                 return;
             }
-/*
-            //run every tick
-            if (lastAction?.Cursor != null)
-            {
-                (Main.mouseX, Main.mouseY) = MapCursorBounds(
-                    lastAction.Cursor[0],
-                    lastAction.Cursor[1],
-                    Player.Center,
-                    8f * 16f // 8 tiles * 16 pixels
-                );
-            }
-*/
 
             // Normal hertz control
             if (Main.GameUpdateCount % hertz != 0)
@@ -222,6 +212,7 @@ namespace RL_API
             //ModContent.GetInstance<RL_API>().Logger.Info($"Agent running for player {Player.name}, myPlayer: {Main.myPlayer}");
             //Main.NewText("Reward: " + rewardAccumulator);
             UpdateObs();
+            //RewardCalculator.Calculate(prevObs,currentCompressedObs);
             SendObservation(isDone: false);
             UpdateState();
 
@@ -281,6 +272,7 @@ namespace RL_API
                 rewardAccumulator += 5f; // Big reward for killing enemy
             }
         }
+        
         public static (int mouseX, int mouseY, Point tileTarget) MapCursorBounds(
             float nnX, float nnY, Vector2 playerCenter, float radiusPx)
         {
@@ -309,21 +301,6 @@ namespace RL_API
             return (mouseX, mouseY, tileTarget);
         }
 
-
-        public static float CalculatePickupReward(InventoryState previousInv, InventoryState currentInv)
-        {
-            float reward = 0f;
-
-            var changes = currentInv.CompareTo(previousInv); // List<(int itemType, int amountPickedUp)>
-
-            foreach (var (itemType, amountPickedUp) in changes)
-            {
-                float rewardPerItem = BlockGatherReward.GetRewardForPickup(itemType,amountPickedUp);
-                reward += rewardPerItem * amountPickedUp;
-            }
-
-            return reward;
-        }
         private void UpdateObs()
         {
             // Capture new inventory
@@ -335,7 +312,8 @@ namespace RL_API
             }
             else
             {
-                rewardAccumulator += CalculatePickupReward(previousInv: lastInventoryState, currentInv: currentInventoryState);
+                //rewardAccumulator += RewardCalculator.CalculatePickupReward(previousInv: lastInventoryState, currentInv: currentInventoryState); 
+                //wrong, should not be here anymore
             }
 
             // Gather full Observation
@@ -346,12 +324,10 @@ namespace RL_API
             var compressed = RLObsCompressor.Compress(currentObs);
             currentCompressedObs = compressed.Flatten(); // flatten if needed
         }
-        float[] currentCompressedObs;
-        InventoryState currentInventoryState;
+
         private void SendObservation(bool isDone)
         {
-            //(This is for the first tick on spawn)
-            if (prevObs == null)
+            if (prevObs == null)//(This is for the first tick on spawn)
             {
                 prevObs = currentCompressedObs;
                 string inputjson = "{\"input_size\":"+prevObs.Length+"}";
