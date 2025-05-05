@@ -11,22 +11,24 @@ namespace RL_API
 {
     class RLPlayer() : ModPlayer
     {
-        float[] prevObs;        
-        float[] currentCompressedObs;
-        InventoryState currentInventoryState;
+        private RLObservation prevObs;
+        private RLObservation currentObs;
+        private float[] prevCompressedObs;        
+        private float[] currentCompressedObs;
+        private InventoryState currentInventoryState;
         //bool isDone = false;
         //List<TileInfo> tiles;
-        int hertz = 1;
+        readonly int hertz = 6; // This means 10 ticks per second (60fps/6)
         //private static string lastKnownAction = "none";
-        AgentAction lastAction;
-        AgentAction newAction;
+        private AgentAction lastAction;
+        private AgentAction newAction;
 
-        int discardCooldown = 600;
+        private int discardCooldown = 600;
 
-        float rewardAccumulator = 0;
+        private float rewardAccumulator = 0;
         private InventoryState lastInventoryState;
 
-        public bool IsDeadLastTick;
+        private  bool IsDeadLastTick;
 
         public override void OnEnterWorld()
         {
@@ -312,25 +314,25 @@ namespace RL_API
             }
             else
             {
-                //rewardAccumulator += RewardCalculator.CalculatePickupReward(previousInv: lastInventoryState, currentInv: currentInventoryState); 
+                //rewardAccumulator += RewardCalculator.CalculatePickupReward(previousInv: lastInventoryState, currentInv: currentInventoryState);
+                rewardAccumulator += RewardCalculator.Calculate(previous:prevObs,current:currentObs); 
                 //wrong, should not be here anymore
             }
 
             // Gather full Observation
-            RLObservation currentObs = RLObsCollector.CollectObservation(Player);
+            currentObs = RLObsCollector.CollectObservation(Player);
             currentObs.InvState = currentInventoryState;
 
             // Compress
-            var compressed = RLObsCompressor.Compress(currentObs);
-            currentCompressedObs = compressed.Flatten(); // flatten if needed
+            currentCompressedObs = RLCompressedObs.Flatten(currentObs);
         }
 
         private void SendObservation(bool isDone)
         {
-            if (prevObs == null)//(This is for the first tick on spawn)
+            if (prevCompressedObs == null)//(This is for the first tick on spawn)
             {
-                prevObs = currentCompressedObs;
-                string inputjson = "{\"input_size\":"+prevObs.Length+"}";
+                prevCompressedObs = currentCompressedObs;
+                string inputjson = "{\"input_size\":"+prevCompressedObs.Length+"}";
                 //ModContent.GetInstance<RL_API>().Logger.Info("Sending Packet: "+inputjson);
                 ConnectionManager.EnqueueObservation(inputjson); //send only the input size on the first tick of world join
                 return; 
@@ -338,7 +340,7 @@ namespace RL_API
 
             var EnvStepPacket = new RLStepPacket
             {
-                Obs = prevObs,
+                Obs = prevCompressedObs,
                 Reward = rewardAccumulator,
                 NextObs = currentCompressedObs,
                 Done = isDone
@@ -350,7 +352,8 @@ namespace RL_API
         }
         public void UpdateState(){
             // Update state for next tick
-            prevObs = currentCompressedObs;
+            prevCompressedObs = currentCompressedObs;
+            prevObs = currentObs;
             rewardAccumulator = 0f;
             lastInventoryState = currentInventoryState;
             lastAction = ConnectionManager.ConsumeAction();

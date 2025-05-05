@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 
+// Deprecated: Will no longer be used
 namespace RL_API
     {
     public static class RLObsCompressor
@@ -10,7 +11,7 @@ namespace RL_API
         {
             try
             { 
-                var compressed = new RLCompressedObs
+                /*var compressed = new RLCompressedObs
                 {
                     NearItems = full.NearItems, // Example scan radius
 
@@ -48,7 +49,7 @@ namespace RL_API
                     PetType = (float)full.PetType / 7000f,
                 };
 
-                return compressed;
+                return compressed;*/
             }
             catch (Exception e)
             {

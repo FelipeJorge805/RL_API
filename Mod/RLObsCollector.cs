@@ -8,12 +8,17 @@ using Terraria.ID;
 
 namespace RL_API
 {
+    // The main purpose of this class is to collect all the data form the player and store it in RLObservation
+    // It collects player stats, buffs/debuffs, inventory, nearby tiles, nearby enemies, armor/accessories, weather/biome/time and more
     public static class RLObsCollector
     {
         private static readonly string[] BiomeOrder = [
             "Forest", "Corruption", "Crimson", "Jungle", "Snow",
             "Desert", "Hallow", "Dungeon", "Underworld", "Sky", "Glowshroom"
         ];
+
+        //This function collects the data from the player and returns a RLObservation object.
+        //It also normalizes the data based on max values, ready for RL.
         public static RLObservation CollectObservation(Player player)
         {
             var observation = new RLObservation
