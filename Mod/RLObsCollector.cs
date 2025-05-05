@@ -100,7 +100,8 @@ namespace RL_API
                 // Tiles around the player
                 TilesAround = CompressTilesAround(TileScanner.scanTiles(player, 8)),
 
-                //InvState,
+                //InvState
+                InvState = new(player.inventory),
             };
 
             return observation;

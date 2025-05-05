@@ -91,14 +91,33 @@ namespace RL_API
                 floats.AddRange(obs.NearItems);
 
             // --- Inventory ---
-            //if (obs.InvState != null && obs.InvState.Flattened != null)
-            //    floats.AddRange(obs.InvState.Flattened);
+            if (obs.InvState != null)
+                floats.AddRange(CompressInventory(obs.InvState));
 
             // --- Tiles ---
             if (obs.TilesAround != null)
                 floats.AddRange(obs.TilesAround);
 
             return [.. floats];
+        }
+        private static float[] CompressInventory(InventoryState invState)
+        {
+            var compressed = new float[50 * 2]; // 50 slots × (stack size + item type)
+
+            int index = 0;
+
+            foreach (var (itemType, totalStackSize) in invState.GetInventoryMap())
+            {
+                if (index >= 50)
+                    break;
+
+                compressed[index * 2] = totalStackSize / 999f; // Stack size normalized
+                compressed[index * 2 + 1] = itemType / 7000f;  // Item type normalized
+
+                index++;
+            }
+
+            return compressed;
         }
     }
 }

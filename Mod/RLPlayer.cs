@@ -15,18 +15,13 @@ namespace RL_API
         private RLObservation currentObs;
         private float[] prevCompressedObs;        
         private float[] currentCompressedObs;
-        private InventoryState currentInventoryState;
-        //bool isDone = false;
-        //List<TileInfo> tiles;
-        readonly int hertz = 6; // This means 10 ticks per second (60fps/6)
-        //private static string lastKnownAction = "none";
+        private readonly int hertz = 6; // This means 10 ticks per second (60fps/6)
         private AgentAction lastAction;
         private AgentAction newAction;
 
         private int discardCooldown = 600;
 
         private float rewardAccumulator = 0;
-        private InventoryState lastInventoryState;
 
         private  bool IsDeadLastTick;
 
@@ -34,15 +29,10 @@ namespace RL_API
         {
             base.OnEnterWorld();
             while(Player == null && Player.inventory == null) { } //wait for inventory to be initialized
-            lastInventoryState = new InventoryState(Player.inventory);
+            //lastInventoryState = new InventoryState(Player.inventory);
             lastAction = AgentAction.Create("still","none",[0f,0f],false);
         }
         
-        /*public override void CopyClientState(ModPlayer targetCopy)
-        {
-            base.CopyClientState(targetCopy);
-            while(Player == null && targetCopy == null && Player.active) { } //wait for inventory to be initialized
-        }*/
         public override void SetControls()
 		{
             if (Player.whoAmI != Main.myPlayer) return;
@@ -214,7 +204,8 @@ namespace RL_API
             //ModContent.GetInstance<RL_API>().Logger.Info($"Agent running for player {Player.name}, myPlayer: {Main.myPlayer}");
             //Main.NewText("Reward: " + rewardAccumulator);
             UpdateObs();
-            //RewardCalculator.Calculate(prevObs,currentCompressedObs);
+            if(prevObs!=null) 
+                rewardAccumulator += RewardCalculator.Calculate(prevObs,currentObs);
             SendObservation(isDone: false);
             UpdateState();
 
@@ -245,7 +236,6 @@ namespace RL_API
                 }
             }
         }*/
-
         public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)
         {
             base.OnHitNPCWithItem(item, target, hit, damageDone);
@@ -305,26 +295,23 @@ namespace RL_API
 
         private void UpdateObs()
         {
-            // Capture new inventory
-            currentInventoryState = new(Player.inventory);
+            // Gather full Observation
+            currentObs = RLObsCollector.CollectObservation(Player);
 
-            if (lastInventoryState == null)
+            // Compress
+            currentCompressedObs = RLCompressedObs.Flatten(currentObs);
+
+            /*if (prevObs == null)
             {
-                lastInventoryState = currentInventoryState;
+                prevObs = currentObs;
+                prevCompressedObs = currentCompressedObs;
             }
             else
             {
                 //rewardAccumulator += RewardCalculator.CalculatePickupReward(previousInv: lastInventoryState, currentInv: currentInventoryState);
                 rewardAccumulator += RewardCalculator.Calculate(previous:prevObs,current:currentObs); 
                 //wrong, should not be here anymore
-            }
-
-            // Gather full Observation
-            currentObs = RLObsCollector.CollectObservation(Player);
-            currentObs.InvState = currentInventoryState;
-
-            // Compress
-            currentCompressedObs = RLCompressedObs.Flatten(currentObs);
+            }*/
         }
 
         private void SendObservation(bool isDone)
@@ -352,10 +339,9 @@ namespace RL_API
         }
         public void UpdateState(){
             // Update state for next tick
-            prevCompressedObs = currentCompressedObs;
             prevObs = currentObs;
+            prevCompressedObs = currentCompressedObs;
             rewardAccumulator = 0f;
-            lastInventoryState = currentInventoryState;
             lastAction = ConnectionManager.ConsumeAction();
         }
         public override void Unload()
