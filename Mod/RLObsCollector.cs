@@ -24,16 +24,16 @@ namespace RL_API
             var observation = new RLObservation
             {
                 // Combat info
-                Health = player.statLife / player.statLifeMax2,
+                Health = player.statLife / (float)player.statLifeMax2,
                 MaxHealth = player.statLifeMax2 / 500f,
-                Mana = player.statMana / player.statManaMax2,
+                Mana = player.statMana / (float)player.statManaMax2,
                 MaxMana = player.statManaMax2 / 200f,
 
                 // Movement
                 VelocityX = player.velocity.X / 30f,
                 VelocityY = player.velocity.Y / 30f,
-                PositionX = player.position.X / 5000f,
-                PositionY = player.position.Y / 2000f,
+                PositionX = player.position.X / 16f / 5000f, //divided by pixels (16) to get tiles, then divided by world size
+                PositionY = player.position.Y / 16f / 2000f, //divided by pixels (16) to get tiles, then divided by world size
 
                 // Player status
                 IsInventoryOpen = Main.playerInventory ? 1f : 0f,
@@ -50,12 +50,12 @@ namespace RL_API
                 FacingDirection = player.direction,
 
                 // Summons
-                ActiveMinionsCount = player.numMinions / player.maxMinions,
+                ActiveMinionsCount = player.numMinions / (float)player.maxMinions,
 
                 // Armor
-                HeadArmorType = player.armor[0].type,
-                ChestArmorType = player.armor[1].type,
-                LegArmorType = player.armor[2].type,
+                HeadArmorType = player.armor[0].type / 7000f,
+                ChestArmorType = player.armor[1].type / 7000f,
+                LegArmorType = player.armor[2].type / 7000f,
                 TotalDefense = player.statDefense / 120f,
 
                 // Accessories
@@ -66,13 +66,13 @@ namespace RL_API
                 GelCount = player.CountItem(ItemID.Gel) / 999f * 4f,
 
                 // Held item
-                HeldItemType = player.HeldItem?.type ?? 0,
+                HeldItemType = (player.HeldItem?.type ?? 0) / 7000f,
 
-                HookType = player.armor[10].type,
-                MountType = player.armor[11].type,
-                LightPetType = player.armor[12].type,
-                PetType = player.armor[13].type,
-                Cart = player.armor[14].type,
+                HookType = player.armor[10].type / 7000f,
+                MountType = player.armor[11].type / 7000f,
+                LightPetType = player.armor[12].type / 7000f,
+                PetType = player.armor[13].type / 7000f,
+                Cart = player.armor[14].type / 7000f,
 
                 // Events / Boss
                 IsBloodMoon = Main.bloodMoon ? 1f : 0f,
@@ -176,9 +176,9 @@ namespace RL_API
             return [.. accessories];
         }
 
-        private static int CountNearbyEnemies(Player player, float radius)
+        private static float CountNearbyEnemies(Player player, float radius)
         {
-            int count = 0;
+            float count = 0;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 var npc = Main.npc[i];
@@ -210,16 +210,16 @@ namespace RL_API
 
             return vec;
         }
-        private static int GetWeatherEventType(Player player)
+        private static float GetWeatherEventType(Player player)
         {
             if (Main.raining)
             {
-                if (player.ZoneSnow) return 2; // Blizzard
-                if (player.ZoneDesert && Main.windSpeedCurrent > 0.3f) return 3; // Sandstorm-like
-                return 1; // Rain
+                if (player.ZoneSnow) return 2f; // Blizzard
+                if (player.ZoneDesert && Main.windSpeedCurrent > 0.3f) return 3f; // Sandstorm-like
+                return 1f; // Rain
             }
-            if (Main.slimeRain) return 4;
-            return 0; // None
+            if (Main.slimeRain) return 4f;
+            return 0f; // None
         }
 
         private static float GetEncodedTime(Player player)
