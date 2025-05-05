@@ -73,8 +73,8 @@ namespace RL_API
             // Disable fancy extras
             Main.maxQ = false; // Older version cloud draw cap
             Main.cloudAlpha = 0f;
-            Main.windSpeedCurrent = 0f;
-            Main.windSpeedTarget = 0f;
+            //Main.windSpeedCurrent = 0f;
+            //Main.windSpeedTarget = 0f;
 
             Main.render = false;
             Main.skipMenu = true; // Stops menu animations
