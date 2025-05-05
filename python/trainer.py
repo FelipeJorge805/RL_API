@@ -9,7 +9,7 @@ import agent
 
 # Settings (using GPU through CUDA)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-global_model = agent.TerrariaAgent(155).to(device)
+global_model = agent.TerrariaAgent(263).to(device)
 optimizer = optim.Adam(global_model.parameters(), lr=1e-4)
 loss_fn = MSELoss()
 experience_buffer = []

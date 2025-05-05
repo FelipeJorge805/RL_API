@@ -71,7 +71,7 @@ def handle_agent_connection(conn, addr, agent_id):
 
                 stream.write(json.dumps(reply).encode('utf-8') + b'\n')
                 stream.flush()
-                #print("after flush")
+                #print(f"After flush! Reply: {reply}")
                 # Save for batching
                 if last_obs is not None:
                     with buffer_lock:
@@ -104,7 +104,7 @@ def handle_agent_connection(conn, addr, agent_id):
                             break
                         time.sleep(5)
                 
-                time.sleep(0.02)  # 20 milliseconds
+                #time.sleep(0.02)  # 20 milliseconds
 
         except Exception as e:
             print(f"[Agent {agent_id}:{client_port}] Error: {e}")
