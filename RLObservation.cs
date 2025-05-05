@@ -5,80 +5,88 @@ namespace RL_API
 {
     public class RLObservation
     {
-        //add max hp / max mana
-        // day time or gameticks ? if outside or with clock
-        //radar increases unit scan radius (might lag)
-        //item states / inventory / free slots/full
         //possible crafts
-        //is drowning?
-        //can swim?
-        //max speed?
         //sort inv button / quick stack // shift delete trashcan
         //add small incentive for exploring a tile every x tiles, maybe 25?
-        //is raining/blizzard/sandtorms
         //glowstick on the ground? spike balls
         //ensure gravestones are counted in tileScan
-        public List<RLItemObservation> NearItems { get; set; } // ItemScanner.scan(player_pos);
 
-        public InventoryState InvState { get; set;}
-
+        // Combat info
+        public float Health { get; set; }
+        public float MaxHealth { get; set; }
+        public float Mana { get; set; }
+        public float MaxMana { get; set; }
+        
         // Player movement
         public float VelocityX { get; set; }
         public float VelocityY { get; set; }
         public float PositionX { get; set; }
         public float PositionY { get; set; }
 
-        // Tile scan
-        public List<TileInfo> TilesAround { get; set; }
-
-        // Combat info
-        public int Health { get; set; }
-        public int Mana { get; set; }
-
-        // Equipment
-        public int HeadArmorType { get; set; }
-        public int ChestArmorType { get; set; }
-        public int LegArmorType { get; set; }
-        public int TotalDefense { get; set; }
-
-        // Accessories
-        public List<int> AccessoryTypes { get; set; }
-
-        // Buffs and Debuffs
-        public List<int> ActiveBuffTypes { get; set; }
-        public List<int> ActiveDebuffTypes { get; set; }
+        // Status
+        public float IsInventoryOpen { get; set; }
+        public float IsInTown { get; set; }
+        public float IsChestOpen { get; set; }
+        public float Breath { get; set; }
+        public float IsWet { get; set; }
+        public float HasGills { get; set; }
+        public float HasNightVision { get; set; }
+        public float HasNoFallDmg { get; set; }
+        public float HasNoKnockback { get; set; }
+        public float IsHooked { get; set; }
+        public float IsBurning { get; set; } 
+        public float FacingDirection { get; set; } // -1 = left, 1 = right
 
         // Summons
-        public int ActiveMinionsCount { get; set; }
+        public float ActiveMinionsCount { get; set; }
 
-        // Events / Bosses / WRONG! NEED MOAR! SILLY AI
-        public bool IsBloodMoon { get; set; }
-        public bool IsBossActive { get; set; }
+        // Equipment
+        public float HeadArmorType { get; set; }
+        public float ChestArmorType { get; set; }
+        public float LegArmorType { get; set; }
+        public float TotalDefense { get; set; }
 
-        // Player states
-        public bool IsFalling { get; set; }
-        public bool IsHooked { get; set; }
-        public bool IsKnockedBack { get; set; }
+        // Accessories
+        public float[] AccessoryTypes { get; set; }
 
         // Ammo / WRONG! NEED MOAR! SILLY AI
-        public int ArrowCount { get; set; }
-        public int GelCount { get; set; }
+        public float ArrowCount { get; set; }
+        public float GelCount { get; set; }
 
         // Held item
-        public int HeldItemType { get; set; }
+        public float HeldItemType { get; set; }    
+
+        public float HookType { get; set; }
+        public float MountType { get; set; }
+        public float LightPetType { get; set; }
+        public float PetType { get; set; }
+        public float Cart { get; set; }
+
+        // Events / Bosses / WRONG! NEED MOAR! SILLY AI
+        public float IsBloodMoon { get; set; }
+        public float IsBossActive { get; set; }
+
+        // Day or Night
+        public float TimeCycle { get; set; } // -1 if unknown, 0–1 = day, 1–2 = night
 
         // Enemies nearby
-        public int NearbyEnemiesCount { get; set; }
-
-        // Player direction
-        public int FacingDirection { get; set; } // -1 = left, 1 = right
+        public float NearbyEnemiesCount { get; set; }
+        public float[] NearbyEnemyInfo { get; set; } // flat array: [x1, y1, id1, ...]  
 
         // Biome info
-        public List<string> CurrentBiomes { get; set; }
+        public float WeatherEventType { get; set; }
+        public float[] CurrentBiomes { get; set; }
 
-        public int HookType { get; set; }
-        public int MountType { get; set; }
-        public int LightPetType { get; set; }
-        public int PetType { get; set; }
+        // Buffs and Debuffs
+        public float[] BuffsVector { get; set; }
+
+        // Nearby dropped items/coins/loot
+        public float[] NearItems { get; set; } // List<RLItemObservation>
+
+        // Current inventory
+        public InventoryState InvState { get; set;}
+
+        // Nearby blocks
+        public float[] TilesAround { get; set; } // List<TileInfo>
     }
 }

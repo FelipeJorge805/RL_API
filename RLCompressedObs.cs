@@ -15,7 +15,7 @@ namespace RL_API
         public float TotalDefense { get; set; }
         public float[] BuffIds { get; set; }
         public float[] AccessoryIds { get; set; }
-        public float CurrentBiome { get; set; } 
+        public float[] CurrentBiome { get; set; } 
         public float HookType { get; set; }
         public float MountType { get; set; }
         public float LightPetType { get; set; }
@@ -47,7 +47,7 @@ namespace RL_API
             if (AccessoryIds != null)
                 floats.AddRange(Array.ConvertAll(AccessoryIds, b => (float)b));
 
-            floats.Add((float)CurrentBiome);
+            floats.AddRange(CurrentBiome);
             floats.Add((float)HookType);
             floats.Add((float)MountType);
             floats.Add((float)LightPetType);

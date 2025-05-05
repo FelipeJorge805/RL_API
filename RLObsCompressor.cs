@@ -12,9 +12,9 @@ namespace RL_API
             { 
                 var compressed = new RLCompressedObs
                 {
-                    NearItems = CompressNearbyItems(full.NearItems, 800f), // Example scan radius
+                    NearItems = full.NearItems, // Example scan radius
 
-                    InvState = CompressInventory(full.InvState),
+                    //InvState = full.InvState,
                             
                     PlayerInfo =
                     [
@@ -26,7 +26,7 @@ namespace RL_API
                         full.Mana / 200f
                     ],
 
-                    TilesAround = CompressTilesAround(full.TilesAround),
+                    TilesAround = full.TilesAround,
 
                     HeldItemType = (float)full.HeldItemType / 7000f,
 
@@ -36,11 +36,11 @@ namespace RL_API
 
                     TotalDefense = Math.Min(full.TotalDefense, 200) / 200f,
 
-                    BuffIds = full.ActiveBuffTypes.ConvertAll(b => (float)b / 300f).ToArray(),
+                    BuffIds = [.. full.BuffsVector],
 
-                    AccessoryIds = full.AccessoryTypes.ConvertAll(a => (float)a / 7000f).ToArray(),
+                    AccessoryIds = [.. full.AccessoryTypes],
 
-                    CurrentBiome = (float)MapBiomeToId(full.CurrentBiomes) / 10f,
+                    CurrentBiome = full.CurrentBiomes,
 
                     HookType = (float)full.HookType / 30f,
                     MountType = (float)full.MountType / 40f,
@@ -55,22 +55,6 @@ namespace RL_API
                 ModContent.GetInstance<RL_API>().Logger.Info("Error in Compress: " + e.Message);
             }
             return null;
-        }
-
-
-        private static byte MapBiomeToId(List<string> biomes)
-        {
-            if (biomes.Contains("Jungle")) return 1;
-            if (biomes.Contains("Desert")) return 2;
-            if (biomes.Contains("Snow")) return 3;
-            if (biomes.Contains("Hallow")) return 4;
-            if (biomes.Contains("Corruption")) return 5;
-            if (biomes.Contains("Crimson")) return 6;
-            if (biomes.Contains("Dungeon")) return 7;
-            if (biomes.Contains("Underworld")) return 8;
-            if (biomes.Contains("Sky")) return 9;
-            if (biomes.Contains("Glowshroom")) return 10;
-            return 0; // Default to Forest
         }
         public static float[] CompressNearbyItems(List<RLItemObservation> items, float scanRadius)
         {
@@ -92,7 +76,7 @@ namespace RL_API
                 compressed.Add(item.IsPickupReady ? 1f : 0f);
             }
 
-            return compressed.ToArray();
+            return [.. compressed];
         }
         public static float[] CompressInventory(InventoryState invState)
         {
@@ -127,7 +111,7 @@ namespace RL_API
                 compressed.Add((float)tile.getBrightness()); // Already 0-1
             }
 
-            return compressed.ToArray();
+            return [.. compressed];
         }
 
     }
