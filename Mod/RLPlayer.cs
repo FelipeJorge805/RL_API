@@ -6,6 +6,9 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 using System.Configuration;
+using Terraria.DataStructures;
+using System.Diagnostics.Tracing;
+using Terraria.Graphics.Effects;
 
 namespace RL_API
 {
@@ -195,6 +198,25 @@ namespace RL_API
 			//base.PreUpdate();
 			if (Player.whoAmI != Main.myPlayer) return;
             Main.hasFocus = true;
+            // Handle movement
+            switch (lastAction.Move)
+            {
+                case "left":
+                    Player.controlLeft = true;
+                    break;
+                case "right":
+                    Player.controlRight = true;
+                    break;
+                case "up":
+                    Player.controlUp = true;
+                    break;
+                case "down":
+                    Player.controlDown = true;
+                    break;
+                case "still":
+                    // Do nothing
+                    break;
+            }
 		}
 		public override void PostUpdate()
 		{
@@ -231,6 +253,22 @@ namespace RL_API
 
             IsDeadLastTick = isDeadNow;
 		}
+        public override void HideDrawLayers(PlayerDrawSet drawInfo)
+        {
+            base.HideDrawLayers(drawInfo);
+            drawInfo.cHead = 0;
+            drawInfo.hideEntirePlayer = true;
+            drawInfo.hideHair = true;
+            drawInfo.hidesBottomSkin = true;
+            drawInfo.hidesTopSkin = true;
+            drawInfo.hideCompositeShoulders = true;
+            drawInfo.DrawDataCache.Clear();
+        }
+        public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
+        {
+            base.DrawEffects(drawInfo, ref r, ref g, ref b, ref a, ref fullBright);
+            drawInfo.DrawDataCache.Clear();
+        }
         public override void OnHurt(Player.HurtInfo info)
         {
             base.OnHurt(info);

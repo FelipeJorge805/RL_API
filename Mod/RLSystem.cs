@@ -5,6 +5,7 @@ using System.Configuration;
 using System.CommandLine.Parsing;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Graphics.Light;
 
 namespace RL_API
 {
@@ -73,6 +74,8 @@ namespace RL_API
             // Disable fancy extras
             Main.maxQ = false; // Older version cloud draw cap
             Main.cloudAlpha = 0f;
+            Main.numClouds = 0;
+            //Main.cloud = [];
             //Main.windSpeedCurrent = 0f;
             //Main.windSpeedTarget = 0f;
 
@@ -82,6 +85,11 @@ namespace RL_API
             //sun and moon animations
             Main.sunModY = 0;
             Main.moonModY = 0;
+            Main.sunCircle = 0f;
+
+            Dust.dCount = 0f;
+            Gore.goreTime = 0;
+
         }
     }
 }
