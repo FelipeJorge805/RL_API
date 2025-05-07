@@ -53,23 +53,23 @@ namespace RL_API
             SoundEngine.StopAmbientSounds();
 
             // Lighting
-            Lighting.Mode = Terraria.Graphics.Light.LightMode.White; // 0 = white, 1 = retro, 2 = color
-            Lighting.GlobalBrightness = 1f;
+            //Lighting.Mode = LightMode.White; // 0 = white, 1 = retro, 2 = color
+            //Lighting.GlobalBrightness = 1f;
 
             // Drawing
-            Main.drawSkip = true; // May not work in all tML versions
-            Main.renderCount = 0;
-            Main.drawToScreen = false;
+            //Main.drawSkip = true; // May not work in all tML versions
+            //Main.renderCount = 0;
+            //Main.drawToScreen = false;
             Main.cursorAlpha = 0;
             Main.cursorOverride = -1;
             Main.InvisibleCursorForGamepad = true;
             Main.GamepadCursorAlpha = 0;
-            Main.maxRaining = 0f; // disables rain visuals (intensity = 0)
+            //Main.maxRaining = 0f; // disables rain visuals (intensity = 0)
             Main.BackgroundEnabled = false;
 
             // (Optional) force background layers off
-            Main.bgAlphaFrontLayer = [0f, 0f, 0f, 0f, 0f];
-            Main.bgAlphaFarBackLayer = [0f, 0f, 0f, 0f, 0f];
+            //Main.bgAlphaFrontLayer = [0f, 0f, 0f, 0f, 0f];
+            //Main.bgAlphaFarBackLayer = [0f, 0f, 0f, 0f, 0f];
 
             // Disable fancy extras
             Main.maxQ = false; // Older version cloud draw cap
@@ -79,7 +79,7 @@ namespace RL_API
             //Main.windSpeedCurrent = 0f;
             //Main.windSpeedTarget = 0f;
 
-            Main.render = false;
+            //Main.render = false;
             Main.skipMenu = true; // Stops menu animations
             
             //sun and moon animations
