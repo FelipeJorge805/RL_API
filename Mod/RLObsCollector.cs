@@ -62,17 +62,17 @@ namespace RL_API
                 AccessoryTypes = GetAccessoryTypes(player),
 
                 // Ammo (you can refine this more later)
-                ArrowCount = player.CountItem(ItemID.WoodenArrow) / 999f * 4f,
-                GelCount = player.CountItem(ItemID.Gel) / 999f * 4f,
+                ArrowCount = player.CountItem(ItemID.WoodenArrow) / (999f * 4f),
+                GelCount = player.CountItem(ItemID.Gel) / 999f,
 
                 // Held item
                 HeldItemType = (player.HeldItem?.type ?? 0) / 7000f,
 
-                HookType = player.armor[10].type / 7000f,
-                MountType = player.armor[11].type / 7000f,
-                LightPetType = player.armor[12].type / 7000f,
-                PetType = player.armor[13].type / 7000f,
-                Cart = player.armor[14].type / 7000f,
+                PetType = player.armor[10].type / 7000f,
+                LightPetType = player.armor[11].type / 7000f,
+                Cart = player.lightOrb ? 1f : 0f, //player.armor[12].type / 7000f,
+                MountType = player.mount._type / 700f,
+                HookType = player.armor[14].type / 7000f,
 
                 // Events / Boss
                 IsBloodMoon = Main.bloodMoon ? 1f : 0f,
@@ -116,7 +116,7 @@ namespace RL_API
                 if (type <= 0 || time <= 0) continue;
 
                 bool isDebuff = Main.debuff[type];
-                float normType = type / 300f * (isDebuff ? -1f : 1f);
+                float normType = type / 350f * (isDebuff ? -1f : 1f);
                 float normTime = Math.Min(time / 54000f, 1f);
 
                 result.Add(normType);
@@ -171,7 +171,7 @@ namespace RL_API
             for (int i = 3; i <= 8; i++) // slots 3 to 8 are accessories by default
             {
                 if (player.armor[i].type > ItemID.None)
-                    accessories.Add(player.armor[i].type);
+                    accessories.Add(player.armor[i].type/2000f);
             }
             return [.. accessories];
         }
