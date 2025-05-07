@@ -5,9 +5,9 @@ using Terraria.ModLoader;
 
 namespace RL_API
 {
-    public class ClassicRecipeFilter : ModSystem
+    public class RecipeFilter : ModSystem
     {
-        public override void AddRecipes()
+        public override void PostAddRecipes()
         {
             var allowedItems = new HashSet<int>
             {
