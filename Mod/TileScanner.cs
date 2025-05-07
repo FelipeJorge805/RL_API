@@ -22,14 +22,13 @@ namespace RL_API
             try{
                 for (int y = -radius; y <= radius; y++)
                 {
-                    var row = new List<TileInfo>();
                     for (int x = -radius; x <= radius; x++)
                     {
                         int tx = px + x;
                         int ty = py + y;
                         //ModContent.GetInstance<RL_API>().Logger.Info("tx:"+tx+" ty:"+ty + " px:"+px + " py:"+py + " x:"+x + " y:"+y);
                         TileInfo tile = EncodeTile(tx,ty);
-                        row.Add(tile);
+                        tiles.Add(tile);
                     }
                 }
             }
