@@ -251,11 +251,15 @@ namespace RL_API
             SendObservation(isDone: false);
             UpdateState();
 
+            if(Main.GameUpdateCount % 600 == 0) //every 10 seconds
+            {
+                RLObsLogger.Log(currentObs, prefix: "[RLObs]");
+            }
             IsDeadLastTick = isDeadNow;
 		}
         public override void HideDrawLayers(PlayerDrawSet drawInfo)
         {
-            base.HideDrawLayers(drawInfo);
+            //base.HideDrawLayers(drawInfo);
             drawInfo.cHead = 0;
             drawInfo.hideEntirePlayer = true;
             drawInfo.hideHair = true;
@@ -264,9 +268,22 @@ namespace RL_API
             drawInfo.hideCompositeShoulders = true;
             drawInfo.DrawDataCache.Clear();
         }
+        /*public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
+        {
+            //base.ModifyDrawInfo(ref drawInfo);
+            Player.hideMisc[0] = true;
+            Player.hideVisibleAccessory = [];
+        }*/
+        public override void FrameEffects()
+        {
+            //base.FrameEffects();
+            Player.head = -1;
+            Player.body = -1;
+            Player.legs = -1;
+        }
         public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
         {
-            base.DrawEffects(drawInfo, ref r, ref g, ref b, ref a, ref fullBright);
+            //base.DrawEffects(drawInfo, ref r, ref g, ref b, ref a, ref fullBright);
             drawInfo.DrawDataCache.Clear();
         }
         public override void OnHurt(Player.HurtInfo info)
@@ -404,6 +421,7 @@ namespace RL_API
         }
         public override void Unload()
         {
+            RLObsLogger.Log(currentObs, prefix: "[RLObs]");
             base.Unload();
             ConnectionManager.Close();
         }
