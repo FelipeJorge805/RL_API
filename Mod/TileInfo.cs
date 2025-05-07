@@ -2,24 +2,11 @@
 using System;
 
 namespace RL_API{
-    public class TileInfo(int tileType, int liquidType, int liquidAmount, float brightness)
+    public class TileInfo(float tileType, float liquidType, float liquidAmount, float brightness)
     {
-        private int tileType = tileType;
-        private int liquidType = liquidType;
-        private int liquidAmount = liquidAmount;
-        private float brightness = brightness;
-
-        public byte TileType { get; internal set; }
-
-        public int LiquidType { get; internal set; }
-
-        public int LiquidAmount { get; internal set; }
-
-        public float Brightness { get; internal set; }
-
-        internal double getBrightness()
-        {
-            return Math.Round(brightness,2);
-        }
+        public float tileType { get; set; } = tileType;
+        public float liquidType { get; set; } = liquidType;
+        public float liquidAmount { get; set; } = liquidAmount;
+        public float brightness { get; set; } = brightness;
     }
 }

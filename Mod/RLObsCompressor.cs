@@ -106,10 +106,10 @@ namespace RL_API
 
             foreach (var tile in tiles)
             {
-                compressed.Add(tile.TileType / 255f);    // Normalize tile type
-                compressed.Add(tile.LiquidType / 2f);     // Normalize liquid type
-                compressed.Add(tile.LiquidAmount / 255f); // Normalize liquid amount
-                compressed.Add((float)tile.getBrightness()); // Already 0-1
+                compressed.Add(tile.tileType / 255f);    // Normalize tile type
+                compressed.Add(tile.liquidType / 2f);     // Normalize liquid type
+                compressed.Add(tile.liquidAmount / 255f); // Normalize liquid amount
+                compressed.Add(tile.brightness); // Already 0-1
             }
 
             return [.. compressed];
