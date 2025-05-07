@@ -101,6 +101,9 @@ namespace RL_API
                 case "use_item":
                     Player.controlUseItem = true;
                     break;
+                case "esc":
+                    Main.playerInventory = !Main.playerInventory; // toggle inv
+                    break;
                 case "jump":
                     Player.controlJump = true;
                     break;
@@ -174,6 +177,7 @@ namespace RL_API
             Main.hasFocus = true;
             
             // Handle movement
+            if(lastAction==null)return;
             switch (lastAction.Move)
             {
                 case "left":
@@ -198,7 +202,9 @@ namespace RL_API
 			//base.PreUpdate();
 			if (Player.whoAmI != Main.myPlayer) return;
             Main.hasFocus = true;
+
             // Handle movement
+            if(lastAction==null)return;
             switch (lastAction.Move)
             {
                 case "left":
@@ -274,6 +280,13 @@ namespace RL_API
             Player.hideMisc[0] = true;
             Player.hideVisibleAccessory = [];
         }*/
+        public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
+        {
+            //base.ModifyDrawInfo(ref drawInfo);
+            drawInfo.hideEntirePlayer = true;
+            //drawInfo.drawPlayer = null; // lol segfault
+            drawInfo.DrawDataCache.Clear();
+        }
         public override void FrameEffects()
         {
             //base.FrameEffects();
