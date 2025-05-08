@@ -17,22 +17,37 @@ namespace RL_API
                 ItemID.SandBlock,
                 ItemID.ClayBlock,
                 ItemID.MudBlock,
+                ItemID.SnowBlock,
+
+                // --- Walls ---
+                ItemID.StoneWall,
+                ItemID.DirtWall,
+                ItemID.WoodWall,
+                ItemID.StoneWall,
+                ItemID.GlassWall,
 
                 // --- Wood ---
                 ItemID.Wood,
+                ItemID.Torch,
+                ItemID.Campfire,
                 ItemID.WoodPlatform,
                 ItemID.WoodenChair,
                 ItemID.WoodenTable,
-                ItemID.WorkBench,
                 ItemID.WoodenDoor,
                 ItemID.WoodenBow,
                 ItemID.WoodenSword,
+                ItemID.WoodenHammer,
+                ItemID.WoodenBoomerang,
+                ItemID.WoodBreastplate,
+                ItemID.WoodHelmet,
+                ItemID.WoodGreaves,
 
                 // --- Copper ---
                 ItemID.CopperOre,
                 ItemID.CopperBar,
                 ItemID.CopperPickaxe,
                 ItemID.CopperAxe,
+                ItemID.CopperHammer,
                 ItemID.CopperShortsword,
                 ItemID.CopperBroadsword,
                 ItemID.CopperHelmet,
@@ -44,6 +59,7 @@ namespace RL_API
                 ItemID.TinBar,
                 ItemID.TinPickaxe,
                 ItemID.TinAxe,
+                ItemID.TinHammer,
                 ItemID.TinShortsword,
                 ItemID.TinBroadsword,
                 ItemID.TinHelmet,
@@ -55,18 +71,24 @@ namespace RL_API
                 ItemID.IronBar,
                 ItemID.IronPickaxe,
                 ItemID.IronAxe,
+                ItemID.IronHammer,
                 ItemID.IronShortsword,
                 ItemID.IronBroadsword,
                 ItemID.IronHelmet,
                 ItemID.IronChainmail,
                 ItemID.IronGreaves,
                 ItemID.IronAnvil,
+                ItemID.EmptyBucket,
+                ItemID.Chain,
 
                 // --- Crafting Stations ---
                 ItemID.WorkBench,
                 ItemID.Furnace,
                 ItemID.IronAnvil,
                 ItemID.LeadAnvil,
+                ItemID.Loom,
+                ItemID.SharpeningStation,
+                ItemID.Sawmill,
 
                 // --- Ammo ---
                 ItemID.WoodenArrow,
@@ -82,6 +104,20 @@ namespace RL_API
                 ItemID.RegenerationPotion,
                 ItemID.SwiftnessPotion,
                 ItemID.IronskinPotion,
+                ItemID.ThornsPotion,
+                ItemID.EndurancePotion,
+                ItemID.NightOwlPotion,
+                ItemID.ArcheryPotion,
+                ItemID.HunterPotion,
+                ItemID.RecallPotion,
+                ItemID.FeatherfallPotion,
+                ItemID.ObsidianSkinPotion,
+                ItemID.MagicPowerPotion,
+                ItemID.MiningPotion,
+                ItemID.SpelunkerPotion,
+                ItemID.GillsPotion,
+                ItemID.SonarPotion,
+                ItemID.InvisibilityPotion,
 
                 // --- Potion Materials ---
                 ItemID.Mushroom,
@@ -90,13 +126,23 @@ namespace RL_API
                 ItemID.Blinkroot,
                 ItemID.Gel,
                 ItemID.BottledWater,
+                ItemID.BottledHoney,
                 ItemID.Bottle,
+                ItemID.Deathweed,
+                ItemID.Waterleaf,
+                ItemID.Fireblossom,
+                ItemID.Cactus,
+                ItemID.BottledHoney,
+                ItemID.Stinger,
+                ItemID.Vine,
+                ItemID.JungleSpores,
 
                 // --- Lead ---
                 ItemID.LeadOre,
                 ItemID.LeadBar,
                 ItemID.LeadPickaxe,
                 ItemID.LeadAxe,
+                ItemID.LeadHammer,
                 ItemID.LeadShortsword,
                 ItemID.LeadBroadsword,
                 ItemID.LeadHelmet,
@@ -108,6 +154,7 @@ namespace RL_API
                 ItemID.SilverBar,
                 ItemID.SilverPickaxe,
                 ItemID.SilverAxe,
+                ItemID.SilverHammer,
                 ItemID.SilverShortsword,
                 ItemID.SilverBroadsword,
                 ItemID.SilverHelmet,
@@ -119,6 +166,7 @@ namespace RL_API
                 ItemID.TungstenBar,
                 ItemID.TungstenPickaxe,
                 ItemID.TungstenAxe,
+                ItemID.TungstenHammer,
                 ItemID.TungstenShortsword,
                 ItemID.TungstenBroadsword,
                 ItemID.TungstenHelmet,
@@ -130,22 +178,26 @@ namespace RL_API
                 ItemID.GoldBar,
                 ItemID.GoldPickaxe,
                 ItemID.GoldAxe,
+                ItemID.GoldHammer,
                 ItemID.GoldShortsword,
                 ItemID.GoldBroadsword,
                 ItemID.GoldHelmet,
                 ItemID.GoldChainmail,
                 ItemID.GoldGreaves,
+                ItemID.GoldWatch,
 
                 // --- Platinum ---
                 ItemID.PlatinumOre,
                 ItemID.PlatinumBar,
                 ItemID.PlatinumPickaxe,
                 ItemID.PlatinumAxe,
+                ItemID.PlatinumHammer,
                 ItemID.PlatinumShortsword,
                 ItemID.PlatinumBroadsword,
                 ItemID.PlatinumHelmet,
                 ItemID.PlatinumChainmail,
                 ItemID.PlatinumGreaves,
+                ItemID.PlatinumWatch,
 
                 // --- Bars (for crafting stations and weapons) ---
                 ItemID.TinBar,
@@ -159,29 +211,7 @@ namespace RL_API
 
                 // --- Other Crafting Materials ---
                 ItemID.Glass,
-                ItemID.WoodWall,
-                ItemID.GlowingMushroom,
-                ItemID.Chain,
-
-                // --- More Potion Materials ---
-                ItemID.Deathweed,
-                ItemID.Waterleaf,
-                ItemID.Fireblossom,
-                ItemID.Cactus,
-                ItemID.BottledHoney,
-                ItemID.Stinger,
-                ItemID.Vine,
-                ItemID.JungleSpores,
-
-                // --- Additional Potions ---
-                ItemID.NightOwlPotion,
-                ItemID.ArcheryPotion,
-                ItemID.HunterPotion,
-                ItemID.RecallPotion,
-                ItemID.FeatherfallPotion,
-                ItemID.ObsidianSkinPotion,
-                ItemID.MagicPowerPotion,
-                ItemID.MiningPotion,
+                ItemID.GlowingMushroom,        
 
                 // --- Meteorite ---
                 ItemID.Meteorite,
@@ -190,6 +220,16 @@ namespace RL_API
                 ItemID.MeteorSuit,
                 ItemID.MeteorLeggings,
                 ItemID.SpaceGun,
+                ItemID.MeteorShot,
+                ItemID.MeteorStaff,
+                ItemID.MeteorHamaxe,
+                ItemID.RedPhaseblade,
+                ItemID.BluePhaseblade,
+                ItemID.GreenPhaseblade,
+                ItemID.YellowPhaseblade,
+                ItemID.PurplePhaseblade,
+                ItemID.WhitePhaseblade,
+                ItemID.OrangePhaseblade,
 
                 // --- Hellstone ---
                 ItemID.Hellstone,
@@ -199,6 +239,15 @@ namespace RL_API
                 ItemID.MoltenGreaves,
                 ItemID.MoltenPickaxe,
                 ItemID.FieryGreatsword,
+                ItemID.MoltenFury,
+                ItemID.MoltenHamaxe,
+                ItemID.MoltenCharm,
+                ItemID.Flamarang,
+                ItemID.Hellforge,
+                ItemID.HellfireArrow,
+                ItemID.ImpStaff,
+                ItemID.PhoenixBlaster,
+                ItemID.Sunfury,
 
                 // --- Hooks ---
                 ItemID.GrapplingHook,
@@ -219,6 +268,9 @@ namespace RL_API
                 ItemID.ShadowScalemail,
                 ItemID.ShadowGreaves,
                 ItemID.DemonBow,
+                ItemID.WarAxeoftheNight,
+                ItemID.TheBreaker,
+                ItemID.BallOHurt,
 
                 // --- Crimtane ---
                 ItemID.CrimtaneOre,
@@ -231,6 +283,48 @@ namespace RL_API
                 ItemID.CrimsonGreaves,
                 ItemID.TheUndertaker,
                 ItemID.FleshGrinder,
+                ItemID.TheRottedFork,
+
+                // --- Food ---
+                ItemID.PumpkinPie,
+                ItemID.BowlofSoup,
+                ItemID.CookedFish,
+
+                // --- Misc ---
+                ItemID.Cobweb,
+                ItemID.Silk,
+                ItemID.Bone,
+                ItemID.CookingPot,
+                ItemID.Bowl,
+                ItemID.Bed,
+                ItemID.ManaCrystal,
+                ItemID.EnchantedBoomerang,
+                ItemID.EnchantedSword,
+
+                // --- Obsidian ---
+                ItemID.Obsidian,
+                ItemID.ObsidianShield,
+                ItemID.ObsidianSkull,
+                ItemID.ObsidianPants,
+                ItemID.ObsidianHelm,
+                ItemID.ObsidianChest,
+
+                // --- Jungle ---
+                ItemID.JungleSpores,
+                ItemID.Stinger,
+                ItemID.BladeofGrass,
+                ItemID.JungleHat,
+                ItemID.JungleShirt,
+                ItemID.JunglePants,
+                ItemID.IvyWhip,
+                ItemID.ThornChakram,
+
+                // --- Altars ---
+                ItemID.BloodySpine,
+                ItemID.SuspiciousLookingEye,
+                ItemID.SlimeCrown,
+                ItemID.WormFood,
+                ItemID.NightsEdge,
 
             };
 
