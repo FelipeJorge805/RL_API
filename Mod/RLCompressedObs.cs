@@ -59,11 +59,12 @@ namespace RL_API
 
             // --- Held Item ---
             floats.Add(obs.HeldItemType);
-            floats.Add(obs.HookType);
-            floats.Add(obs.MountType);
-            floats.Add(obs.LightPetType);
+
             floats.Add(obs.PetType);
+            floats.Add(obs.LightPetType);
             floats.Add(obs.Cart);
+            floats.Add(obs.MountType);
+            floats.Add(obs.HookType);
 
             // --- Events / Bosses ---
             floats.Add(obs.IsBloodMoon);

@@ -56,11 +56,11 @@ namespace RL_API
         // Held item
         public float HeldItemType { get; set; }    
 
-        public float HookType { get; set; }
-        public float MountType { get; set; }
-        public float LightPetType { get; set; }
         public float PetType { get; set; }
+        public float LightPetType { get; set; }
         public float Cart { get; set; }
+        public float MountType { get; set; }
+        public float HookType { get; set; }
 
         // Events / Bosses / WRONG! NEED MOAR! SILLY AI
         public float IsBloodMoon { get; set; }

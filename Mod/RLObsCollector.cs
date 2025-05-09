@@ -68,11 +68,11 @@ namespace RL_API
                 // Held item
                 HeldItemType = (player.HeldItem?.type ?? 0) / 7000f,
 
-                PetType = player.armor[10].type / 7000f,
-                LightPetType = player.armor[11].type / 7000f,
-                Cart = player.lightOrb ? 1f : 0f, //player.armor[12].type / 7000f,
-                MountType = player.mount._type / 700f,
-                HookType = player.armor[14].type / 7000f,
+                PetType = player.miscEquips[0].type / 7000f,
+                LightPetType = player.miscEquips[1].type / 7000f,
+                Cart = player.miscEquips[2].type / 7000f,
+                MountType = player.miscEquips[3].type/ 700f,
+                HookType = player.miscEquips[4].type / 7000f,
 
                 // Events / Boss
                 IsBloodMoon = Main.bloodMoon ? 1f : 0f,
