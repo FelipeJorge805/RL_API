@@ -1,0 +1,31 @@
+-world generation - reduce extra wood and unnecessary blocks
+
+-maybe change tileScanner to say if its a block,platform or crafting station(or tree)
+
+-reward for picking up good items like pickaxes or w/e - both from crafting but also chests (avoid dropped items)
+
+-extract accessory data class
+
+-add check for if focusRecipe changed when sendind recipe Obs - avoids unnecessary data gathering
+
+-fix defense stat in obs
+
+-item enchants? currently ignored in obs
+
+-check if craft function creates the item on mouse or directly in inv
+
+-hold jump instead of tap
+
+-add a tiny exploration incentive every 50(?) tiles
+
+-improve crafting recipe data
+
+-add campfire/banners/lantern/regen to obs, and set bonuses?
+
+-Shift functionality through player.controlXX doesn't exist... its currently doing what ctrl does
+
+-try to set Main.mainmenu[1] = true or something for the autoconnect loop.. it might jsut select 'multiplayer' and work
+
+-encode armor better [defense, bonus type (melee/ranged/magic) and set number]
+
+-make proper documentation for the entire mod :) fun
