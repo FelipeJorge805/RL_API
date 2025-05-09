@@ -18,6 +18,7 @@ MAIN_ACTIONS = [
     "grapple",
     "interact",
     "mount",
+    "craft",
     #"hotbar_0",
     #"hotbar_1",
     #"hotbar_2",
