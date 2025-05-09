@@ -8,6 +8,7 @@ MOVEMENT_ACTIONS = ["left", "right", "still", "up", "down"]
 # All available 'actions' (for now)
 MAIN_ACTIONS = [
     "use_item",
+    "esc",
     "jump",
     "quick_heal",
     "quick_mana",
@@ -17,16 +18,18 @@ MAIN_ACTIONS = [
     "grapple",
     "interact",
     "mount",
-    "hotbar_0",
-    "hotbar_1",
-    "hotbar_2",
-    "hotbar_3",
-    "hotbar_4",
-    "hotbar_5",
-    "hotbar_6",
-    "hotbar_7",
-    "hotbar_8",
-    "hotbar_9",
+    #"hotbar_0",
+    #"hotbar_1",
+    #"hotbar_2",
+    #"hotbar_3",
+    #"hotbar_4",
+    #"hotbar_5",
+    #"hotbar_6",
+    #"hotbar_7",
+    #"hotbar_8",
+    #"hotbar_9",
+    "scroll_up",
+    "scroll_down",
     "none"
 ]
 

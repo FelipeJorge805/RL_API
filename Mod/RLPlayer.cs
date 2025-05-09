@@ -9,6 +9,7 @@ using System.Configuration;
 using Terraria.DataStructures;
 using System.Diagnostics.Tracing;
 using Terraria.Graphics.Effects;
+using Terraria.GameContent.Achievements;
 
 namespace RL_API
 {
@@ -137,6 +138,9 @@ namespace RL_API
                 case "mount":
                     Player.controlMount = true;
                     break;
+                case "craft":
+                    CraftRecipe();
+                    break;
                 case "hotbar_0":
                 case "hotbar_1":
                 case "hotbar_2":
@@ -147,11 +151,40 @@ namespace RL_API
                 case "hotbar_7":
                 case "hotbar_8":
                 case "hotbar_9":
-                    rewardAccumulator += hotbarSwapSelectedReward(newAction.Action);
+                    //rewardAccumulator += hotbarSwapSelectedReward(newAction.Action);
+                    break;
+                case "scroll_up":
+                    {
+                        if(Main.playerInventory)
+                            Main.focusRecipe = Math.Max(0, Main.focusRecipe - 1);
+                        else
+                            rewardAccumulator += hotbarSwapSelectedReward(newAction.Action);
+                    }
+                    break;
+                case "scroll_down":
+                    {
+                        if(Main.playerInventory)
+                            Main.focusRecipe = Math.Min(Main.availableRecipe.Length - 1, Main.focusRecipe + 1);
+                        else
+                            rewardAccumulator += hotbarSwapSelectedReward(newAction.Action);
+                    }
                     break;
                 case "none":
                     // Do nothing
                     break;
+            }
+
+        }
+
+        private void CraftRecipe()
+        {
+            if (Main.playerInventory &&
+                Main.focusRecipe >= 0 &&
+                Main.focusRecipe < Main.availableRecipe.Length)
+            {
+                var recipe = Main.recipe[Main.availableRecipe[Main.focusRecipe]];
+
+                recipe.Create();
             }
 
         }
@@ -440,8 +473,8 @@ namespace RL_API
         }
 
         public float hotbarSwapSelectedReward(string action){
-            int hotbarSlot = int.Parse(action.Split('_')[1]);
-            Player.selectedItem = hotbarSlot;
+            int hotbarSlot = action.Split('_')[1] == "up" ? +1 : -1; // scroll up or down
+            Player.selectedItem = ( Player.selectedItem + hotbarSlot + 10 ) % 10; // wrap around (+10 is for edge case of -1)
             Item selectedItem = Player.inventory[Player.selectedItem];
             bool isHotbarSlotEmpty = selectedItem == null || selectedItem.stack == 0 || selectedItem.type == ItemID.None;
             if(isHotbarSlotEmpty){
