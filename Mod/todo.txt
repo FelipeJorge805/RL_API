@@ -29,3 +29,5 @@
 -encode armor better [defense, bonus type (melee/ranged/magic) and set number]
 
 -make proper documentation for the entire mod :) fun
+
+-fix itemHeld debugger (system.single[]), fix crafts (shows a lot of recipes instead of actually craftable at the moment)

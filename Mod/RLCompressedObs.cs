@@ -99,6 +99,10 @@ namespace RL_API
             if (obs.TilesAround != null)
                 floats.AddRange(obs.TilesAround);
 
+            // --- Crafts ---
+            if (obs.Crafts != null)
+                floats.AddRange(obs.Crafts);
+
             return [.. floats];
         }
     }

@@ -115,7 +115,7 @@ namespace RL_API
         private static float[] GetCrafts()
         {
             const int MaxIngredients = 4;
-            const int RecipesToShow = 40;
+            const int RecipesToShow = 10;
             const int FloatsPerRecipe = 1 + (MaxIngredients * 2); // result + (ingredient ID + stack) × 4
             const int TotalSize = RecipesToShow * FloatsPerRecipe * ItemFeatureExtractor.VectorSize;
 
