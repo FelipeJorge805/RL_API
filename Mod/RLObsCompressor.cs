@@ -64,15 +64,15 @@ namespace RL_API
             foreach (var item in items)
             {
                 // Normalize ItemID
-                float normalizedId = item.ItemId / 7000f; // Terraria ItemID max (safe overestimate)
+                //float normalizedId = item.ItemId / 7000f; // Terraria ItemID max (safe overestimate)
                 // Normalize StackSize
-                float normalizedStack = item.StackSize / 999f; // Max typical stack
+                //float normalizedStack = item.StackSize / 999f; // Max typical stack
                 // Normalize distance
                 float normalizedDistance = item.DistanceToPlayer / scanRadius;
                 // Pickup ready (already 0 or 1)
 
-                compressed.Add(normalizedId);
-                compressed.Add(normalizedStack);
+                //compressed.Add(normalizedId);
+                //compressed.Add(normalizedStack);
                 compressed.Add(normalizedDistance);
                 compressed.Add(item.IsPickupReady ? 1f : 0f);
             }

@@ -5,8 +5,7 @@ using Terraria;
 
 public class RLItemObservation
 {
-    public int ItemId { get; set; }
-    public int StackSize { get; set; }
+    public float[] ItemVector { get; set; }
     public float DistanceToPlayer { get; set; }
     public bool IsPickupReady { get; set; }
 }
@@ -29,8 +28,7 @@ namespace RL_API
                     {
                         nearbyItems.Add(new RLItemObservation
                         {
-                            ItemId = item.type,
-                            StackSize = item.stack,
+                            ItemVector = ItemFeatureExtractor.ExtractItemData(item),
                             DistanceToPlayer = dist,
                             IsPickupReady = item.noGrabDelay == 0
                         });
@@ -46,8 +44,7 @@ namespace RL_API
             {
                 sortedItems.Add(new RLItemObservation
                 {
-                    ItemId = -1, // Special ID for "no item"
-                    StackSize = 0,
+                    ItemVector = [0,0,0,0,0,0,0,0],
                     DistanceToPlayer = -1f,
                     IsPickupReady = false
                 });

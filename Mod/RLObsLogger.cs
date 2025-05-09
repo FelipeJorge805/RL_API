@@ -85,6 +85,9 @@ namespace RL_API
             // --- Tiles ---
             sb.Append("TilesAround:").Append(string.Join("|", obs.TilesAround ?? [])).Append(", ");
 
+            // --- Crafts ---
+            sb.Append("Crafts:").Append(string.Join("|", obs.Crafts ?? [])).Append(", ");
+
             return sb.ToString();
         }
     }

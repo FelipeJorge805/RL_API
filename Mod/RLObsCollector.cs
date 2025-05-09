@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection.Metadata;
 using Microsoft.Xna.Framework;
 using RL_API;
 using Terraria;
@@ -53,10 +55,10 @@ namespace RL_API
                 ActiveMinionsCount = player.numMinions / (float)player.maxMinions,
 
                 // Armor
-                HeadArmorType = player.armor[0].type / 7000f,
-                ChestArmorType = player.armor[1].type / 7000f,
-                LegArmorType = player.armor[2].type / 7000f,
-                TotalDefense = player.statDefense / 120f,
+                HeadArmorType = player.armor[0].defense / 8f,
+                ChestArmorType = player.armor[1].defense / 9f,
+                LegArmorType = player.armor[2].defense / 8f,
+                TotalDefense = player.statDefense / 75f,
 
                 // Accessories
                 AccessoryTypes = GetAccessoryTypes(player),
@@ -66,7 +68,7 @@ namespace RL_API
                 GelCount = player.CountItem(ItemID.Gel) / 999f,
 
                 // Held item
-                HeldItemType = (player.HeldItem?.type ?? 0) / 7000f,
+                HeldItemType = ItemFeatureExtractor.ExtractItemData(player.HeldItem),
 
                 PetType = player.miscEquips[0].type / 7000f,
                 LightPetType = player.miscEquips[1].type / 7000f,
@@ -97,15 +99,68 @@ namespace RL_API
                 //Nearby items
                 NearItems = CompressNearbyItems(ItemScanner.ScanNearbyItems(player, 10, 10),10),
 
+                //InvState
+                InvState = new(player.inventory),
+
                 // Tiles around the player
                 TilesAround = CompressTilesAround(TileScanner.scanTiles(player, 6)),
 
-                //InvState
-                InvState = new(player.inventory),
+                // Crafts
+                Crafts = GetCrafts(),
             };
 
             return observation;
         }
+
+        private static float[] GetCrafts()
+        {
+            const int MaxIngredients = 4;
+            const int RecipesToShow = 40;
+            const int FloatsPerRecipe = 1 + (MaxIngredients * 2); // result + (ingredient ID + stack) × 4
+            const int TotalSize = RecipesToShow * FloatsPerRecipe * ItemFeatureExtractor.VectorSize;
+
+            if (!Main.playerInventory || Main.focusRecipe < 0 || Main.focusRecipe >= Main.availableRecipe.Length)
+                return new float[TotalSize]; // zero-padded array
+            
+            List<float> crafts = [];
+
+            int low = Math.Max(0, Main.focusRecipe - RecipesToShow/2);
+            int high = Math.Min(Main.availableRecipe.Length, low + RecipesToShow);
+
+            for (int i = low; i < high; i++)
+            {
+                var recipe = Main.recipe[Main.availableRecipe[i]];
+
+                // Output item
+                crafts.AddRange(ItemFeatureExtractor.ExtractItemData(recipe.createItem));
+
+/* Not adding ingredients right now, just result item
+
+                // Ingredients (pad to 4 max)
+                int pad = 0;
+                while (pad < 4)
+                {
+                    if (pad < recipe.requiredItem.Count && recipe.requiredItem[pad] != null)
+                    {
+                        crafts.Add(recipe.requiredItem[pad].type / 7000f);
+                        crafts.Add(recipe.requiredItem[pad].stack / 99f);
+                    }
+                    else
+                    {
+                        crafts.Add(0f);
+                        crafts.Add(0f);
+                    }
+                    pad++;
+                }
+*/            }
+
+             // Pad missing recipes if fewer than RecipesToShow
+            while (crafts.Count < TotalSize)
+                crafts.Add(0f);
+
+            return [.. crafts];
+        }
+
         private static float[] GetBuffVector(Player player, int maxPairs)
         {
             var result = new List<float>(maxPairs * 2);
@@ -241,15 +296,15 @@ namespace RL_API
             foreach (var item in items)
             {
                 // Normalize ItemID
-                float normalizedId = item.ItemId / 7000f; // Terraria ItemID max (safe overestimate)
+                //float normalizedId = item.ItemId / 7000f; // Terraria ItemID max (safe overestimate)
                 // Normalize StackSize
-                float normalizedStack = item.StackSize / 999f; // Max typical stack
+                //float normalizedStack = item.StackSize / 999f; // Max typical stack
                 // Normalize distance
                 float normalizedDistance = item.DistanceToPlayer / scanRadius;
                 // Pickup ready (already 0 or 1)
 
-                compressed.Add(normalizedId);
-                compressed.Add(normalizedStack);
+                compressed.AddRange(item.ItemVector);
+                //compressed.Add(normalizedStack);
                 compressed.Add(normalizedDistance);
                 compressed.Add(item.IsPickupReady ? 1f : 0f);
             }
@@ -258,17 +313,23 @@ namespace RL_API
         }
         public static float[] CompressInventory(InventoryState invState)
         {
-            var compressed = new float[50 * 2]; // 50 slots × (stack size + item type)
+            // Need to account for coin slots and ammo slots
+
+            int InventorySize = Main.playerInventory ? 50 : 10;
+            var compressed = new float[50 * ItemFeatureExtractor.VectorSize]; // 50 slots × (stack size + item type)
 
             int index = 0;
 
             foreach (var (itemType, totalStackSize) in invState.GetInventoryMap())
             {
-                if (index >= 50)
+                if (index >= InventorySize)
                     break;
 
-                compressed[index * 2] = totalStackSize / 999f; // Stack size normalized
-                compressed[index * 2 + 1] = itemType / 7000f;  // Item type normalized
+                float[] itemVector = ItemFeatureExtractor.ExtractItemData(ContentSamples.ItemsByType[itemType]); // this wont get enchants, I believe
+                compressed[index * ItemFeatureExtractor.VectorSize] = Math.Clamp(totalStackSize / 999f, 0f, 1f); // for proper stack size;
+                Array.Copy(itemVector,1,compressed, (index * ItemFeatureExtractor.VectorSize) + 1, 7);
+                //compressed[index * 2] =  totalStackSize / 999f;
+                //compressed[index * 2 + 1] = itemType / 7000f;  // Item type normalized
 
                 index++;
             }

@@ -73,7 +73,7 @@ namespace RL_API
             }
 
             //shift modifier
-            if(lastAction.Shift) Player.controlSmart = true;
+            if(lastAction.Shift) Player.controlTorch = true;
 
             // Handle movement
             switch (lastAction.Move)
@@ -139,7 +139,7 @@ namespace RL_API
                     Player.controlMount = true;
                     break;
                 case "craft":
-                    CraftRecipe();
+                    rewardAccumulator += CraftRecipe();
                     break;
                 case "hotbar_0":
                 case "hotbar_1":
@@ -176,7 +176,7 @@ namespace RL_API
 
         }
 
-        private void CraftRecipe()
+        private float CraftRecipe()
         {
             if (Main.playerInventory &&
                 Main.focusRecipe >= 0 &&
@@ -185,8 +185,9 @@ namespace RL_API
                 var recipe = Main.recipe[Main.availableRecipe[Main.focusRecipe]];
 
                 recipe.Create();
+                return 0.05f; // minor incentive for trying to craft correctly
             }
-
+            else return -0.05f; // minor punishment for trying to craft incorrectly
         }
 
         public override void PreUpdateBuffs()

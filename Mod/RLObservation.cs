@@ -54,7 +54,7 @@ namespace RL_API
         public float GelCount { get; set; }
 
         // Held item
-        public float HeldItemType { get; set; }    
+        public float[] HeldItemType { get; set; }    
 
         public float PetType { get; set; }
         public float LightPetType { get; set; }
@@ -88,5 +88,7 @@ namespace RL_API
 
         // Nearby blocks
         public float[] TilesAround { get; set; } // List<TileInfo>
+
+        public float[] Crafts { get; set; }
     }
 }
