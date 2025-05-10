@@ -160,7 +160,6 @@ namespace RL_API
 
             return [.. crafts];
         }
-
         private static float[] GetBuffVector(Player player, int maxPairs)
         {
             var result = new List<float>(maxPairs * 2);
@@ -172,7 +171,7 @@ namespace RL_API
 
                 bool isDebuff = Main.debuff[type];
                 float normType = type / 350f * (isDebuff ? -1f : 1f);
-                float normTime = Math.Min(time / 54000f, 1f);
+                float normTime = time == 1 ? 1f : Math.Min(time / 18000f, 1f); // 1 is for 'permanent' buffs like campfire
 
                 result.Add(normType);
                 result.Add(normTime);
@@ -183,7 +182,6 @@ namespace RL_API
 
             return [.. result];
         }
-
         private static float[] GetNearbyEnemyInfo(Player player, float radius, int maxEnemies = 10)
         {
             var nearest = new SortedList<float, float[]>(); // distance → [x, y, id]
@@ -219,7 +217,6 @@ namespace RL_API
 
             return [.. result];
         }
-
         private static float[] GetAccessoryTypes(Player player)
         {
             var accessories = new List<float>();
@@ -230,7 +227,6 @@ namespace RL_API
             }
             return [.. accessories];
         }
-
         private static float CountNearbyEnemies(Player player, float radius)
         {
             float count = 0;
@@ -246,7 +242,6 @@ namespace RL_API
             }
             return count;
         }
-
         private static float[] GetBiomeOneHot(Player player)
         {
             float[] vec = new float[BiomeOrder.Length];
@@ -276,7 +271,6 @@ namespace RL_API
             if (Main.slimeRain) return 4f;
             return 0f; // None
         }
-
         private static float GetEncodedTime(Player player)
         {
             bool canSeeTime = player.accWatch > 0 || !player.ZoneRockLayerHeight;
@@ -336,8 +330,6 @@ namespace RL_API
 
             return compressed;
         }
-
-
         public static float[] CompressTilesAround(List<TileInfo> tiles)
         {
             var compressed = new List<float>();
