@@ -6,7 +6,7 @@
 
 -extract accessory data class
 
--add check for if focusRecipe changed when sendind recipe Obs - avoids unnecessary data gathering
+-add check for if focusRecipe changed when sending recipe Obs - avoids unnecessary data gathering
 
 -fix defense stat in obs
 
@@ -14,20 +14,22 @@
 
 -check if craft function creates the item on mouse or directly in inv
 
--hold jump instead of tap
-
 -add a tiny exploration incentive every 50(?) tiles
 
 -improve crafting recipe data
 
--add campfire/banners/lantern/regen to obs, and set bonuses?
+-add campfire/banners/lantern/regen to obs  ~~~  Kind of done through buffs already
 
 -Shift functionality through player.controlXX doesn't exist... its currently doing what ctrl does
 
 -try to set Main.mainmenu[1] = true or something for the autoconnect loop.. it might jsut select 'multiplayer' and work
 
--encode armor better [defense, bonus type (melee/ranged/magic) and set number]
+-encode armor better [defense, bonus type (melee/ranged/magic) and set number/bonus]
 
 -make proper documentation for the entire mod :) fun
 
 -fix itemHeld debugger (system.single[]), fix crafts (shows a lot of recipes instead of actually craftable at the moment)
+
+-add flag for is inventory open and dialog open /chest open/ etc
+
+-add reward for quickHeal, quickMana and quickBuffs
