@@ -23,6 +23,7 @@ namespace RL_API
         private AgentAction lastAction;
         private AgentAction newAction;
 
+        private int escapeCooldown = 120;
         private int discardCooldown = 600;
 
         private float rewardAccumulator = 0;
@@ -39,9 +40,12 @@ namespace RL_API
         
         public override void SetControls()
 		{
+            //if(Main.GameUpdateCount%60==0)Player.controlInv = true;
             if (Player.whoAmI != Main.myPlayer) return;
             Main.hasFocus = true; // Set focus to true to prevent the game from pausing when alt-tabbing
-            if(discardCooldown>=0)discardCooldown--;
+            if(discardCooldown>0)discardCooldown--;
+            if(escapeCooldown>0)escapeCooldown--;
+            
             newAction = ConnectionManager.PeekAction();
             
             if(lastAction==null){ // this is for edge cases like initial world join
@@ -103,7 +107,15 @@ namespace RL_API
                     Player.controlUseItem = true;
                     break;
                 case "esc":
-                    Main.playerInventory = !Main.playerInventory; // toggle inv
+                    {
+                        if(escapeCooldown > 0) // small punishment for spamming key
+                        {
+                            rewardAccumulator -= 0.05f;
+                        }else{
+                            Player.controlInv = true; // toggle inv
+                            escapeCooldown = 60; // 1 second cooldown (60fps)
+                        }
+                    }
                     break;
                 case "jump":
                     Player.controlJump = true;
