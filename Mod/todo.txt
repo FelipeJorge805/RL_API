@@ -4,7 +4,7 @@
 
 -reward for picking up good items like pickaxes or w/e - both from crafting but also chests (avoid dropped items)
 
--extract accessory data class
+-make a extract accessory data class
 
 -add check for if focusRecipe changed when sending recipe Obs - avoids unnecessary data gathering
 
@@ -28,8 +28,8 @@
 
 -make proper documentation for the entire mod :) fun
 
--fix crafts (shows a lot of recipes instead of actually craftable at the moment)
-
 -add flag for is dialog open / gravestone / sign / npc talk
 
 -add reward for quickHeal, quickMana and quickBuffs
+
+-add reward for armor/accessory/misc equips
