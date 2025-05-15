@@ -55,7 +55,7 @@ namespace RL_API
             sb.Append("Arrows:").Append(obs.ArrowCount).Append(", Gel:").Append(obs.GelCount).Append(", ");
 
             // --- Held item ---
-            sb.Append("Held:").Append(obs.HeldItemType).Append(", ");
+            sb.Append("Held:").Append(string.Join("|", obs.HeldItemType ?? [])).Append(", ");
 
             // --- Mount/Pet ---
             sb.Append("Hook:").Append(obs.HookType).Append(", Mount:").Append(obs.MountType)
