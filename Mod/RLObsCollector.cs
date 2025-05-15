@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using RL_API;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace RL_API
 {
@@ -125,8 +126,8 @@ namespace RL_API
             List<float> crafts = [];
 
             int low = Math.Max(0, Main.focusRecipe - RecipesToShow/2);
-            int high = Math.Min(Main.availableRecipe.Length, low + RecipesToShow);
-
+            int high = Math.Min(Main.numAvailableRecipes, low + RecipesToShow);
+            //ModContent.GetInstance<RL_API>().Logger.Debug("Low: "+low+" High: "+high+" available: "+Main.numAvailableRecipes);
             for (int i = low; i < high; i++)
             {
                 var recipe = Main.recipe[Main.availableRecipe[i]];
