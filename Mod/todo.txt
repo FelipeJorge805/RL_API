@@ -1,4 +1,4 @@
--world generation - reduce extra wood and unnecessary blocks
+-world generation - reduce extra wood and unnecessary blocks ~~ TEST IT
 
 -maybe change tileScanner to say if its a block,platform or crafting station(or tree)
 
@@ -16,7 +16,7 @@
 
 -add a tiny exploration incentive every 50(?) tiles
 
--improve crafting recipe data
+-improve crafting recipe obs data, currently only sending the result item
 
 -add campfire/banners/lantern/regen to obs  ~~~  Kind of done through buffs already
 
@@ -28,8 +28,8 @@
 
 -make proper documentation for the entire mod :) fun
 
--fix itemHeld debugger (system.single[]), fix crafts (shows a lot of recipes instead of actually craftable at the moment)
+-fix crafts (shows a lot of recipes instead of actually craftable at the moment)
 
--add flag for is inventory open and dialog open /chest open/ etc
+-add flag for is dialog open / gravestone / sign / npc talk
 
 -add reward for quickHeal, quickMana and quickBuffs
