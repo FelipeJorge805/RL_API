@@ -19,6 +19,17 @@ namespace RL_API
             // Example reward for block/item pickup
             reward += CalculatePickupReward(previous.InvState, current.InvState);
 
+            // Max Health Reward
+            if(current.MaxHealth > previous.MaxHealth) reward += (current.MaxHealth-previous.MaxHealth) / 2f;
+
+            // Max Mana Reward
+            if(current.MaxMana > previous.MaxMana) reward += (current.MaxMana-previous.MaxMana) / 2f;
+
+            // Minion Reward
+            if(current.ActiveMinionsCount > previous.ActiveMinionsCount) reward += 5f;
+
+            if(current.TotalDefense > previous.TotalDefense) reward += current.TotalDefense - previous.TotalDefense;
+
             return reward;
         }
 
