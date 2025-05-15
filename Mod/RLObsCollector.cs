@@ -116,7 +116,7 @@ namespace RL_API
         {
             const int MaxIngredients = 4;
             const int RecipesToShow = 10;
-            const int FloatsPerRecipe = 1 + (MaxIngredients * 2); // result + (ingredient ID + stack) × 4
+            const int FloatsPerRecipe = 8; // 1 + (MaxIngredients * 2); // result + (ingredient ID + stack) × 4
             const int TotalSize = RecipesToShow * FloatsPerRecipe * ItemFeatureExtractor.VectorSize;
 
             if (!Main.playerInventory || Main.focusRecipe < 0 || Main.focusRecipe >= Main.availableRecipe.Length)
@@ -132,7 +132,8 @@ namespace RL_API
                 var recipe = Main.recipe[Main.availableRecipe[i]];
 
                 // Output item
-                crafts.AddRange(ItemFeatureExtractor.ExtractItemData(recipe.createItem));
+                //crafts.AddRange(ItemFeatureExtractor.ExtractItemData(recipe.createItem));
+                crafts.Add((float)recipe.createItem.type);
 
 /* Not adding ingredients right now, just result item
 
