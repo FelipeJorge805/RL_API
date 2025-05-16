@@ -33,3 +33,5 @@
 -add reward for quickHeal, quickMana and quickBuffs
 
 -add reward for armor/accessory/misc equips
+
+-add reward for new buffs, punish debuffs, open/loot wild chest
