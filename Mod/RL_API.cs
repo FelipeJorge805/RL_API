@@ -11,14 +11,17 @@ namespace RL_API
     public class RL_API : Mod
     {
         private static bool LoopHasBeenCalled = false;
+        public static bool isAgent = false;
         public override void Load()
         {
-            bool isAgent = Environment.GetCommandLineArgs().Any(arg => arg.Contains("--agent"));
+            isAgent = Environment.GetCommandLineArgs().Any(arg => arg.Contains("--agent"));
             if (!isAgent && !LoopHasBeenCalled)
             {
                 Logger.Info("\n\nNon Agent mode detected, skipping join loop.\n");
                 return;
-            }else{
+            }
+            else
+            {
                 //StartJoinLoop(); commented out for simplicity while testing socket connections
                 LoopHasBeenCalled = true;
                 Logger.Info("\n\nAgent mode detected, starting join loop.\n");
