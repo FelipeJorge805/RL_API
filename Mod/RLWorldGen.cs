@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
-
+/*
 namespace RL_API{
     
     public class WorldSystem : ModSystem
@@ -82,4 +82,4 @@ namespace RL_API{
             WorldGen.RangeFrame(0, 0, Main.maxTilesX, Main.maxTilesY); // Refresh visuals
         }
     }
-}
+}*/
