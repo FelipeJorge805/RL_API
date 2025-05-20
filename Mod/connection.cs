@@ -30,6 +30,12 @@ namespace RL_API
             if (_client != null && _client.Connected)
                 return;
 
+            if(!RL_API.isAgent)
+            {
+                ModContent.GetInstance<RL_API>().Logger.Info("[RL/CM] Not in agent mode, skipping connection.");
+                return;
+            }
+            
             try
             {
                 _client = new TcpClient(host, port);
