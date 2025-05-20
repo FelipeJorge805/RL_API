@@ -41,7 +41,9 @@ namespace RL_API
                 // Player status
                 IsInventoryOpen = Main.playerInventory ? 1f : 0f,
                 IsInTown = player.townNPCs>2 ? 1f : 0f,
-                IsChestOpen = Main.editChest ? 1f : 0f,
+                IsChestOpen = player.chest != -1 ? 1f : 0f,
+                IsTalkingToNPC = (player.talkNPC != -1 || Main.npcChatText != "") ? 1f : 0f,
+                IsEditingSign = (player.sign != -1 || Main.editSign || Main.editChest) ? 1f : 0f,
                 Breath = player.breathMax > 0 ? (float)player.breath / player.breathMax : 1f,
                 IsWet = player.wet ? 1f : 0f,
                 HasGills = player.gills ? 1f : 0f,

@@ -110,7 +110,7 @@ namespace RL_API
                     {
                         if(escapeCooldown > 0) // small punishment for spamming key
                         {
-                            rewardAccumulator -= 0.05f;
+                            rewardAccumulator -= 0.02f;
                         }else{
                             Player.controlInv = true; // toggle inv
                             escapeCooldown = 60; // 1 second cooldown (60fps)
@@ -121,13 +121,14 @@ namespace RL_API
                     Player.controlJump = true;
                     break;
                 case "quick_heal":
-                    Player.QuickHeal();
+                    Player.QuickHeal(); // Reward done in GetHealLife override
                     break;
                 case "quick_mana":
-                    Player.QuickMana();
+                    Player.QuickMana(); // Reward done in GetHealMana override
                     break;
                 case "quick_buff":
                     Player.QuickBuff();
+                    RewardCalculator.quickBuffPressed = true;
                     break;
                 case "swap_hotbar":
                     //SwapHotbarItems(); // Your custom function
@@ -186,6 +187,17 @@ namespace RL_API
                     break;
             }
 
+        }
+        public override void GetHealLife(Item item, bool quickHeal, ref int healValue)
+        {
+            base.GetHealLife(item, quickHeal, ref healValue);
+            rewardAccumulator += healValue / 10f;
+        }
+
+        public override void GetHealMana(Item item, bool quickHeal, ref int healValue)
+        {
+            base.GetHealMana(item, quickHeal, ref healValue);
+            rewardAccumulator += healValue / 20f;
         }
 
         private float CraftRecipe()
