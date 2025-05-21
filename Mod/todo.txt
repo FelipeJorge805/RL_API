@@ -22,16 +22,10 @@
 
 -Shift functionality through player.controlXX doesn't exist... its currently doing what ctrl does
 
--try to set Main.mainmenu[1] = true or something for the autoconnect loop.. it might jsut select 'multiplayer' and work
+-try to set Main.mainmenu[1] = true; or something for the autoconnect loop.. it might just select 'multiplayer' and autoconnect
 
 -encode armor better [defense, bonus type (melee/ranged/magic) and set number/bonus]
 
 -make proper documentation for the entire mod :) fun
 
--add flag for is dialog open / gravestone / sign / npc talk
-
--add reward for quickHeal, quickMana and quickBuffs
-
 -add reward for armor/accessory/misc equips
-
--add reward for new buffs, punish debuffs, open/loot wild chest

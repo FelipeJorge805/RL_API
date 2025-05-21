@@ -27,6 +27,8 @@ namespace RL_API
         public float IsInventoryOpen { get; set; }
         public float IsInTown { get; set; }
         public float IsChestOpen { get; set; }
+        public float IsTalkingToNPC { get; set; }
+        public float IsEditingSign { get; set; } // or tombstone
         public float Breath { get; set; }
         public float IsWet { get; set; }
         public float HasGills { get; set; }
