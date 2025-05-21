@@ -8,12 +8,27 @@ namespace RL_API{
     {
         public override void PostWorldGen()
         {
+            int replacedTrees = 0;
+
             for (int x = 10; x < Main.maxTilesX - 10; x++)
             {
                 for (int y = 10; y < Main.maxTilesY - 10; y++)
                 {
                     Tile tile = Main.tile[x, y];
                     if (tile == null || !tile.HasTile) continue;
+
+                    // 🌳 Tree normalization
+                    if (tile.TileType == TileID.Trees)
+                    {
+                        int treeType = tile.TileFrameX / 22;
+                        if (treeType != 0)
+                        {
+                            tile.TileFrameX = 0;
+                            tile.TileFrameY = 0;
+                            replacedTrees++;
+                        }
+                        continue; // skip other checks for tree tiles
+                    }
 
                     string tileName = TileLoader.GetTile(tile.TileType)?.Name?.ToLowerInvariant() ?? "";
 
@@ -78,7 +93,7 @@ namespace RL_API{
                     }
                 }
             }
-
+            ModContent.GetInstance<RL_API>().Logger.Info($"[WorldGen] Replaced {replacedTrees} non-forest trees.");
             WorldGen.RangeFrame(0, 0, Main.maxTilesX, Main.maxTilesY); // Refresh visuals
         }
     }
